@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ff6b6b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Diseños">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>REA Logo Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Great+Vibes&family=Satisfy&family=Pacifico&family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Permanent+Marker&family=Rock+Salt&family=Shadows+Into+Light&family=Amatic+SC:wght@400;700&family=Lobster&family=Sacramento&family=Allura&family=Alex+Brush&family=Pinyon+Script&family=Tangerine:wght@400;700&family=Italianno&family=Marck+Script&family=Parisienne&family=Petit+Formal+Script&family=Rouge+Script&family=Seaweed+Script&family=Yellowtail&family=Mr+Dafoe&family=Norican&family=Cookie&family=Courgette&family=Niconne&family=Leckerli+One&family=Grand+Hotel&family=Playball&family=Berkshire+Swash&family=Clicker+Script&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a0a0c0;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e94560;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+            vertical-align: middle;
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        select {
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 2px solid #3a3a5c;
+            border-radius: 20px;
+            background: #1a1a2e;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .generate-btn {
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .generate-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(233, 69, 96, 0.5);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid #3a3a5c;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            padding: 5px 12px;
+            border-radius: 12px;
+        }
+
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px;
+            background: #fff;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-container.dark-bg {
+            background: #1a1a2e;
+        }
+
+        .preview-container.transparent-bg {
+            background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 20px 20px;
+        }
+
+        .logo-preview {
+            padding: 30px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .logo-main {
+            line-height: 1.1;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .logo-sub {
+            transition: all 0.3s ease;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            border: 1px solid #3a3a5c;
+            border-radius: 12px;
+            background: transparent;
+            color: #a0a0c0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        .variation-counter {
+            text-align: center;
+            color: #a0a0c0;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .color-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .color-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-group label {
+            font-size: 0.8rem;
+            color: #a0a0c0;
+        }
+
+        input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #3a3a5c;
+            border-radius: 10px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .style-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .style-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .style-grid::-webkit-scrollbar-track {
+            background: #242442;
+            border-radius: 3px;
+        }
+
+        .style-grid::-webkit-scrollbar-thumb {
+            background: #e94560;
+            border-radius: 3px;
+        }
+
+        .style-card {
+            padding: 15px 8px;
+            border: 2px solid #3a3a5c;
+            border-radius: 12px;
+            background: #242442;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .style-card:hover {
+            border-color: #e94560;
+            transform: translateY(-2px);
+        }
+
+        .style-card.active {
+            border-color: #e94560;
+            background: rgba(233, 69, 96, 0.2);
+        }
+
+        .style-card .card-preview {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #fff;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .style-card .card-name {
+            font-size: 0.65rem;
+            color: #a0a0c0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .download-section {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid #3a3a5c;
+        }
+
+        .download-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .download-row label {
+            font-size: 0.85rem;
+            color: #a0a0c0;
+        }
+
+        .download-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .download-btn {
+            padding: 12px 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 2px solid #3a3a5c;
+            border-radius: 15px;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            border-color: #e94560;
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .download-btn.primary {
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            border: none;
+        }
+
+        .notice {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #4ecdc4;
+            color: #0f0f1a;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: transform 0.3s;
+            z-index: 100;
+        }
+
+        .notice.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 8px 15px;
+            font-size: 0.75rem;
+            border: 1px solid #3a3a5c;
+            border-radius: 20px;
+            background: transparent;
+            color: #a0a0c0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            border-color: #feca57;
+            color: #feca57;
+            background: rgba(254, 202, 87, 0.1);
+        }
+        .nav-bar {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border: 2px solid #3a3a5c;
+            border-radius: 20px;
+            background: transparent;
+            color: #a0a0c0;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            border-color: transparent;
+        }
+
+        .install-btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border: 2px solid #4ecdc4;
+            border-radius: 20px;
+            background: transparent;
+            color: #4ecdc4;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .install-btn:hover {
+            background: #4ecdc4;
+            color: #0f0f1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-bar">
+            <a class="nav-link" href="index.html">Frases</a>
+            <a class="nav-link" href="logo-angel.html">Logo Angel</a>
+            <a class="nav-link active" href="logo-rea.html">Logo REA</a>
+            <button class="install-btn" id="installBtn" onclick="installApp()">Instalar App</button>
+        </nav>
+        <h1>REA Logo Generator <span class="badge">Cricut Ready</span></h1>
+        <p class="subtitle">Rosa Elena Angel - Más de 150 Estilos de Firma</p>
+
+        <div class="controls">
+            <select id="categorySelect">
+                <option value="all">Todos los Estilos</option>
+                <option value="elegante">Elegante</option>
+                <option value="manuscrito">Manuscrito</option>
+                <option value="moderno">Moderno</option>
+                <option value="vintage">Vintage</option>
+                <option value="mexicano">Mexicano</option>
+                <option value="angel">Angel</option>
+                <option value="apilado">Apilado (3 Filas)</option>
+                <option value="minimalista">Minimalista</option>
+            </select>
+            <button class="generate-btn" id="generateBtn">Generar Logo</button>
+        </div>
+
+        <div class="main-grid">
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-label">Vista Previa</span>
+                    <div class="actions">
+                        <button class="btn" onclick="setBg('light')">Claro</button>
+                        <button class="btn" onclick="setBg('dark')">Oscuro</button>
+                        <button class="btn" onclick="randomize()">Aleatorio</button>
+                    </div>
+                </div>
+                <div class="preview-container" id="previewContainer">
+                    <div class="logo-preview" id="logoPreview">
+                        <div class="logo-main" id="logoMain">REA</div>
+                        <div class="logo-sub" id="logoSub">Rosa Elena Angel</div>
+                    </div>
+                </div>
+                <div class="variation-counter" id="variationCounter">Variación 1 de 108</div>
+
+                <div class="color-controls">
+                    <div class="color-group">
+                        <label>Principal:</label>
+                        <input type="color" id="mainColor" value="#1a1a2e" onchange="updateColors()">
+                    </div>
+                    <div class="color-group">
+                        <label>Secundario:</label>
+                        <input type="color" id="subColor" value="#666666" onchange="updateColors()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-label">Estilos</span>
+                </div>
+
+                <div class="category-tabs">
+                    <button class="tab-btn active" onclick="filterStyles('all')">Todos</button>
+                    <button class="tab-btn" onclick="filterStyles('elegante')">Elegante</button>
+                    <button class="tab-btn" onclick="filterStyles('manuscrito')">Manuscrito</button>
+                    <button class="tab-btn" onclick="filterStyles('moderno')">Moderno</button>
+                    <button class="tab-btn" onclick="filterStyles('vintage')">Vintage</button>
+                    <button class="tab-btn" onclick="filterStyles('mexicano')">Mexicano</button>
+                    <button class="tab-btn" onclick="filterStyles('angel')">Angel</button>
+                    <button class="tab-btn" onclick="filterStyles('apilado')">Apilado</button>
+                </div>
+
+                <div class="style-grid" id="styleGrid"></div>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <div class="download-row">
+                <label>Tamaño:</label>
+                <select id="sizeSelect">
+                    <option value="500">Pequeño (500px)</option>
+                    <option value="1000" selected>Mediano (1000px)</option>
+                    <option value="2000">Grande (2000px)</option>
+                    <option value="3000">XL Print (3000px)</option>
+                </select>
+                <div class="download-buttons">
+                    <button class="download-btn primary" onclick="downloadSVG()">Bajar SVG</button>
+                    <button class="download-btn" onclick="downloadPNG()">Bajar PNG</button>
+                    <button class="download-btn" onclick="downloadPNGTransparent()">PNG Transparente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notice" id="notice">Descargado!</div>
+
+    <script>
+        // 100+ Logo Variations
+        const logoStyles = [
+            // Elegante (20)
+            { id: 1, category: 'elegante', font: "'Great Vibes', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 14, spacing: 8 },
+            { id: 2, category: 'elegante', font: "'Allura', cursive", main: 'REA', sub: '~ Rosa Elena Angel ~', mainSize: 85, subSize: 13, spacing: 6 },
+            { id: 3, category: 'elegante', font: "'Alex Brush', cursive", main: 'R E A', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 14, spacing: 10 },
+            { id: 4, category: 'elegante', font: "'Pinyon Script', cursive", main: 'REA', sub: '✦ Rosa Elena Angel ✦', mainSize: 95, subSize: 12, spacing: 8 },
+            { id: 5, category: 'elegante', font: "'Sacramento', cursive", main: 'REA', sub: 'R O S A  E L E N A  A N G E L', mainSize: 100, subSize: 10, spacing: 12 },
+            { id: 6, category: 'elegante', font: "'Tangerine', cursive", main: 'REA', sub: '— Rosa Elena Angel —', mainSize: 110, subSize: 14, spacing: 6, weight: 700 },
+            { id: 7, category: 'elegante', font: "'Italianno', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 100, subSize: 15, spacing: 8 },
+            { id: 8, category: 'elegante', font: "'Parisienne', cursive", main: '~ REA ~', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 13, spacing: 6 },
+            { id: 9, category: 'elegante', font: "'Petit Formal Script', cursive", main: 'REA', sub: '• Rosa • Elena • Angel •', mainSize: 75, subSize: 12, spacing: 4 },
+            { id: 10, category: 'elegante', font: "'Rouge Script', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 14, spacing: 8 },
+            { id: 11, category: 'elegante', font: "'Clicker Script', cursive", main: 'REA', sub: '༺ Rosa Elena Angel ༻', mainSize: 85, subSize: 13, spacing: 6 },
+            { id: 12, category: 'elegante', font: "'Great Vibes', cursive", main: '♥ REA ♥', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 14, spacing: 8 },
+            { id: 13, category: 'elegante', font: "'Allura', cursive", main: 'R.E.A', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 13, spacing: 6 },
+            { id: 14, category: 'elegante', font: "'Sacramento', cursive", main: '❦ REA ❦', sub: 'Rosa Elena Angel', mainSize: 95, subSize: 12, spacing: 8 },
+            { id: 15, category: 'elegante', font: "'Pinyon Script', cursive", main: 'REA', sub: '☙ Rosa Elena Angel ❧', mainSize: 90, subSize: 13, spacing: 6 },
+            { id: 16, category: 'elegante', font: "'Alex Brush', cursive", main: '✿ REA ✿', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 14, spacing: 8 },
+            { id: 17, category: 'elegante', font: "'Tangerine', cursive", main: 'REA', sub: '═══ Rosa Elena Angel ═══', mainSize: 105, subSize: 11, spacing: 4, weight: 700 },
+            { id: 18, category: 'elegante', font: "'Italianno', cursive", main: '« REA »', sub: 'Rosa Elena Angel', mainSize: 95, subSize: 14, spacing: 6 },
+            { id: 19, category: 'elegante', font: "'Parisienne', cursive", main: 'REA', sub: '▸ Rosa Elena Angel ◂', mainSize: 85, subSize: 13, spacing: 8 },
+            { id: 20, category: 'elegante', font: "'Great Vibes', cursive", main: '𝓡𝓔𝓐', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 6 },
+
+            // Manuscrito (20)
+            { id: 21, category: 'manuscrito', font: "'Dancing Script', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 14, spacing: 6, weight: 700 },
+            { id: 22, category: 'manuscrito', font: "'Caveat', cursive", main: 'REA', sub: '- Rosa Elena Angel -', mainSize: 95, subSize: 15, spacing: 4, weight: 700 },
+            { id: 23, category: 'manuscrito', font: "'Kalam', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 6, weight: 700 },
+            { id: 24, category: 'manuscrito', font: "'Shadows Into Light', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 15, spacing: 8 },
+            { id: 25, category: 'manuscrito', font: "'Permanent Marker', cursive", main: 'REA', sub: 'ROSA ELENA ANGEL', mainSize: 75, subSize: 12, spacing: 10 },
+            { id: 26, category: 'manuscrito', font: "'Rock Salt', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 60, subSize: 11, spacing: 6 },
+            { id: 27, category: 'manuscrito', font: "'Satisfy', cursive", main: 'REA', sub: '~ Rosa Elena Angel ~', mainSize: 90, subSize: 14, spacing: 6 },
+            { id: 28, category: 'manuscrito', font: "'Marck Script', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 95, subSize: 14, spacing: 8 },
+            { id: 29, category: 'manuscrito', font: "'Mr Dafoe', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 13, spacing: 6 },
+            { id: 30, category: 'manuscrito', font: "'Yellowtail', cursive", main: 'REA', sub: '• Rosa Elena Angel •', mainSize: 90, subSize: 14, spacing: 8 },
+            { id: 31, category: 'manuscrito', font: "'Dancing Script', cursive", main: '~ REA ~', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 6, weight: 600 },
+            { id: 32, category: 'manuscrito', font: "'Caveat', cursive", main: '★ REA ★', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 15, spacing: 4, weight: 600 },
+            { id: 33, category: 'manuscrito', font: "'Kalam', cursive", main: 'R•E•A', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 14, spacing: 6 },
+            { id: 34, category: 'manuscrito', font: "'Satisfy', cursive", main: '♡ REA ♡', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 6 },
+            { id: 35, category: 'manuscrito', font: "'Shadows Into Light', cursive", main: 'R E A', sub: '— Rosa Elena Angel —', mainSize: 75, subSize: 14, spacing: 10 },
+            { id: 36, category: 'manuscrito', font: "'Marck Script', cursive", main: '( REA )', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 14, spacing: 8 },
+            { id: 37, category: 'manuscrito', font: "'Permanent Marker', cursive", main: '→ REA ←', sub: 'ROSA ELENA ANGEL', mainSize: 70, subSize: 11, spacing: 12 },
+            { id: 38, category: 'manuscrito', font: "'Yellowtail', cursive", main: 'REA', sub: '_______________', mainSize: 95, subSize: 14, spacing: 0, subText: '_______________' },
+            { id: 39, category: 'manuscrito', font: "'Dancing Script', cursive", main: '✧ REA ✧', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 6, weight: 500 },
+            { id: 40, category: 'manuscrito', font: "'Caveat', cursive", main: 'REA', sub: '☆ Rosa Elena Angel ☆', mainSize: 95, subSize: 14, spacing: 4, weight: 700 },
+
+            // Moderno (20)
+            { id: 41, category: 'moderno', font: "'Lobster', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 13, spacing: 10 },
+            { id: 42, category: 'moderno', font: "'Pacifico', cursive", main: 'REA', sub: 'ROSA ELENA ANGEL', mainSize: 85, subSize: 11, spacing: 12 },
+            { id: 43, category: 'moderno', font: "'Courgette', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 8 },
+            { id: 44, category: 'moderno', font: "'Cookie', cursive", main: 'REA', sub: '| Rosa Elena Angel |', mainSize: 95, subSize: 14, spacing: 6 },
+            { id: 45, category: 'moderno', font: "'Niconne', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 14, spacing: 8 },
+            { id: 46, category: 'moderno', font: "'Grand Hotel', cursive", main: 'REA', sub: '— Rosa Elena Angel —', mainSize: 85, subSize: 13, spacing: 6 },
+            { id: 47, category: 'moderno', font: "'Norican', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 14, spacing: 8 },
+            { id: 48, category: 'moderno', font: "'Playball', cursive", main: 'REA', sub: '• ROSA • ELENA • ANGEL •', mainSize: 85, subSize: 11, spacing: 4 },
+            { id: 49, category: 'moderno', font: "'Leckerli One', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 14, spacing: 8 },
+            { id: 50, category: 'moderno', font: "'Berkshire Swash', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 13, spacing: 6 },
+            { id: 51, category: 'moderno', font: "'Lobster', cursive", main: '[ REA ]', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 13, spacing: 10 },
+            { id: 52, category: 'moderno', font: "'Pacifico', cursive", main: 'R / E / A', sub: 'Rosa Elena Angel', mainSize: 75, subSize: 12, spacing: 8 },
+            { id: 53, category: 'moderno', font: "'Courgette', cursive", main: '◆ REA ◆', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 14, spacing: 6 },
+            { id: 54, category: 'moderno', font: "'Cookie', cursive", main: 'REA', sub: '//  Rosa Elena Angel  //', mainSize: 90, subSize: 13, spacing: 4 },
+            { id: 55, category: 'moderno', font: "'Grand Hotel', cursive", main: '♦ REA ♦', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 13, spacing: 6 },
+            { id: 56, category: 'moderno', font: "'Niconne', cursive", main: 'R.E.A.', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 8 },
+            { id: 57, category: 'moderno', font: "'Playball', cursive", main: '< REA >', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 12, spacing: 6 },
+            { id: 58, category: 'moderno', font: "'Norican', cursive", main: '• REA •', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 8 },
+            { id: 59, category: 'moderno', font: "'Lobster', cursive", main: 'REA', sub: '+ Rosa Elena Angel +', mainSize: 90, subSize: 12, spacing: 10 },
+            { id: 60, category: 'moderno', font: "'Pacifico', cursive", main: '→ REA ←', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 12, spacing: 8 },
+
+            // Vintage (20)
+            { id: 61, category: 'vintage', font: "'Amatic SC', cursive", main: 'REA', sub: 'Rosa Elena Angel', mainSize: 110, subSize: 16, spacing: 12, weight: 700 },
+            { id: 62, category: 'vintage', font: "'Seaweed Script', cursive", main: 'REA', sub: '~ Est. Rosa Elena Angel ~', mainSize: 80, subSize: 12, spacing: 6 },
+            { id: 63, category: 'vintage', font: "'Amatic SC', cursive", main: '★ REA ★', sub: 'ROSA ELENA ANGEL', mainSize: 100, subSize: 14, spacing: 14, weight: 700 },
+            { id: 64, category: 'vintage', font: "'Berkshire Swash', cursive", main: 'REA', sub: '※ Rosa Elena Angel ※', mainSize: 80, subSize: 12, spacing: 6 },
+            { id: 65, category: 'vintage', font: "'Amatic SC', cursive", main: '{ REA }', sub: 'Rosa Elena Angel', mainSize: 105, subSize: 15, spacing: 10, weight: 400 },
+            { id: 66, category: 'vintage', font: "'Seaweed Script', cursive", main: '✦ REA ✦', sub: 'Rosa Elena Angel', mainSize: 75, subSize: 12, spacing: 6 },
+            { id: 67, category: 'vintage', font: "'Amatic SC', cursive", main: 'R • E • A', sub: '— Rosa Elena Angel —', mainSize: 95, subSize: 14, spacing: 8, weight: 700 },
+            { id: 68, category: 'vintage', font: "'Berkshire Swash', cursive", main: '☆ REA ☆', sub: 'Rosa Elena Angel', mainSize: 75, subSize: 12, spacing: 6 },
+            { id: 69, category: 'vintage', font: "'Amatic SC', cursive", main: '◈ REA ◈', sub: 'Rosa Elena Angel', mainSize: 100, subSize: 15, spacing: 10, weight: 700 },
+            { id: 70, category: 'vintage', font: "'Seaweed Script', cursive", main: 'REA', sub: '✿ Rosa Elena Angel ✿', mainSize: 80, subSize: 11, spacing: 4 },
+            { id: 71, category: 'vintage', font: "'Amatic SC', cursive", main: '▲ REA ▲', sub: 'Rosa Elena Angel', mainSize: 100, subSize: 14, spacing: 12, weight: 400 },
+            { id: 72, category: 'vintage', font: "'Berkshire Swash', cursive", main: '❖ REA ❖', sub: 'Rosa Elena Angel', mainSize: 75, subSize: 12, spacing: 6 },
+            { id: 73, category: 'vintage', font: "'Amatic SC', cursive", main: '[ R E A ]', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 15, spacing: 8, weight: 700 },
+            { id: 74, category: 'vintage', font: "'Seaweed Script', cursive", main: '♠ REA ♠', sub: 'Rosa Elena Angel', mainSize: 75, subSize: 12, spacing: 6 },
+            { id: 75, category: 'vintage', font: "'Amatic SC', cursive", main: 'REA', sub: '══════════════', mainSize: 110, subSize: 12, spacing: 0, weight: 700 },
+            { id: 76, category: 'vintage', font: "'Berkshire Swash', cursive", main: '⚜ REA ⚜', sub: 'Rosa Elena Angel', mainSize: 70, subSize: 12, spacing: 6 },
+            { id: 77, category: 'vintage', font: "'Amatic SC', cursive", main: '◇ REA ◇', sub: '• Rosa Elena Angel •', mainSize: 100, subSize: 14, spacing: 10, weight: 700 },
+            { id: 78, category: 'vintage', font: "'Seaweed Script', cursive", main: 'REA', sub: '⟐ Rosa Elena Angel ⟐', mainSize: 80, subSize: 11, spacing: 4 },
+            { id: 79, category: 'vintage', font: "'Amatic SC', cursive", main: '✶ REA ✶', sub: 'Rosa Elena Angel', mainSize: 105, subSize: 15, spacing: 12, weight: 400 },
+            { id: 80, category: 'vintage', font: "'Berkshire Swash', cursive", main: '❋ REA ❋', sub: 'Rosa Elena Angel', mainSize: 70, subSize: 12, spacing: 6 },
+
+            // Mexicano (28)
+            { id: 81, category: 'mexicano', font: "'Lobster', cursive", main: '¡ REA !', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 13, spacing: 8 },
+            { id: 82, category: 'mexicano', font: "'Pacifico', cursive", main: '★ REA ★', sub: '~ Rosa Elena Angel ~', mainSize: 80, subSize: 12, spacing: 6 },
+            { id: 83, category: 'mexicano', font: "'Dancing Script', cursive", main: '♥ REA ♥', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 8, weight: 700 },
+            { id: 84, category: 'mexicano', font: "'Satisfy', cursive", main: '☀ REA ☀', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 6 },
+            { id: 85, category: 'mexicano', font: "'Great Vibes', cursive", main: '✿ REA ✿', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 13, spacing: 8 },
+            { id: 86, category: 'mexicano', font: "'Caveat', cursive", main: '🌵 REA 🌵', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 4, weight: 700 },
+            { id: 87, category: 'mexicano', font: "'Kalam', cursive", main: '❀ REA ❀', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 14, spacing: 6 },
+            { id: 88, category: 'mexicano', font: "'Permanent Marker', cursive", main: '¡VIVA REA!', sub: 'Rosa Elena Angel', mainSize: 60, subSize: 11, spacing: 10 },
+            { id: 89, category: 'mexicano', font: "'Amatic SC', cursive", main: '☆ REA ☆', sub: '¡Rosa Elena Angel!', mainSize: 100, subSize: 14, spacing: 10, weight: 700 },
+            { id: 90, category: 'mexicano', font: "'Lobster', cursive", main: '♦ REA ♦', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 12, spacing: 8 },
+            { id: 91, category: 'mexicano', font: "'Pacifico', cursive", main: '✦ REA ✦', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 12, spacing: 6 },
+            { id: 92, category: 'mexicano', font: "'Dancing Script', cursive", main: '◆ REA ◆', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 14, spacing: 8, weight: 600 },
+            { id: 93, category: 'mexicano', font: "'Great Vibes', cursive", main: '۞ REA ۞', sub: 'Rosa Elena Angel', mainSize: 75, subSize: 13, spacing: 6 },
+            { id: 94, category: 'mexicano', font: "'Satisfy', cursive", main: '⚘ REA ⚘', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 14, spacing: 6 },
+            { id: 95, category: 'mexicano', font: "'Caveat', cursive", main: '✽ REA ✽', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 14, spacing: 4, weight: 600 },
+            { id: 96, category: 'mexicano', font: "'Kalam', cursive", main: '❁ REA ❁', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 14, spacing: 6 },
+            { id: 97, category: 'mexicano', font: "'Amatic SC', cursive", main: '✯ REA ✯', sub: 'Rosa Elena Angel', mainSize: 95, subSize: 14, spacing: 10, weight: 700 },
+            { id: 98, category: 'mexicano', font: "'Lobster', cursive", main: '❤ REA ❤', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 13, spacing: 8 },
+            { id: 99, category: 'mexicano', font: "'Dancing Script', cursive", main: '✿ R E A ✿', sub: 'Rosa Elena Angel', mainSize: 75, subSize: 14, spacing: 6, weight: 700 },
+            { id: 100, category: 'mexicano', font: "'Great Vibes', cursive", main: '✾ REA ✾', sub: 'Rosa Elena Angel', mainSize: 80, subSize: 13, spacing: 8 },
+
+            // Angel (25) - Enfocado en Angel
+            { id: 109, category: 'angel', font: "'Great Vibes', cursive", main: 'Angel', sub: 'Rosa Elena', mainSize: 95, subSize: 14, spacing: 8 },
+            { id: 110, category: 'angel', font: "'Allura', cursive", main: '✦ Angel ✦', sub: 'R E A', mainSize: 85, subSize: 12, spacing: 10 },
+            { id: 111, category: 'angel', font: "'Dancing Script', cursive", main: 'Angel', sub: '~ Rosa Elena Angel ~', mainSize: 90, subSize: 13, spacing: 6, weight: 700 },
+            { id: 112, category: 'angel', font: "'Sacramento', cursive", main: '♥ Angel ♥', sub: 'REA', mainSize: 100, subSize: 14, spacing: 8 },
+            { id: 113, category: 'angel', font: "'Parisienne', cursive", main: 'Angel', sub: 'Rosa Elena', mainSize: 90, subSize: 14, spacing: 6 },
+            { id: 114, category: 'angel', font: "'Satisfy', cursive", main: '~ Angel ~', sub: 'Rosa Elena Angel', mainSize: 85, subSize: 13, spacing: 8 },
+            { id: 115, category: 'angel', font: "'Alex Brush', cursive", main: '✿ Angel ✿', sub: 'REA', mainSize: 85, subSize: 12, spacing: 10 },
+            { id: 116, category: 'angel', font: "'Tangerine', cursive", main: 'Angel', sub: '— Rosa Elena —', mainSize: 105, subSize: 14, spacing: 6, weight: 700 },
+            { id: 117, category: 'angel', font: "'Pinyon Script', cursive", main: '❦ Angel ❦', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 12, spacing: 8 },
+            { id: 118, category: 'angel', font: "'Italianno', cursive", main: 'Angel', sub: '✦ R E A ✦', mainSize: 100, subSize: 11, spacing: 12 },
+            { id: 119, category: 'angel', font: "'Caveat', cursive", main: '★ Angel ★', sub: 'Rosa Elena', mainSize: 90, subSize: 14, spacing: 6, weight: 700 },
+            { id: 120, category: 'angel', font: "'Lobster', cursive", main: 'Angel', sub: 'Rosa Elena Angel', mainSize: 90, subSize: 13, spacing: 8 },
+            { id: 121, category: 'angel', font: "'Pacifico', cursive", main: '• Angel •', sub: 'REA', mainSize: 85, subSize: 12, spacing: 10 },
+            { id: 122, category: 'angel', font: "'Great Vibes', cursive", main: '༺ Angel ༻', sub: 'Rosa Elena', mainSize: 85, subSize: 14, spacing: 8 },
+            { id: 123, category: 'angel', font: "'Amatic SC', cursive", main: 'ANGEL', sub: 'Rosa Elena Angel', mainSize: 110, subSize: 14, spacing: 10, weight: 700 },
+            { id: 124, category: 'angel', font: "'Kalam', cursive", main: '♡ Angel ♡', sub: 'REA', mainSize: 85, subSize: 13, spacing: 8 },
+            { id: 125, category: 'angel', font: "'Marck Script', cursive", main: 'Angel', sub: '~ Rosa Elena ~', mainSize: 95, subSize: 14, spacing: 6 },
+            { id: 126, category: 'angel', font: "'Shadows Into Light', cursive", main: 'A N G E L', sub: 'Rosa Elena Angel', mainSize: 70, subSize: 14, spacing: 8 },
+            { id: 127, category: 'angel', font: "'Cookie', cursive", main: '« Angel »', sub: 'REA', mainSize: 90, subSize: 12, spacing: 10 },
+            { id: 128, category: 'angel', font: "'Grand Hotel', cursive", main: '✧ Angel ✧', sub: 'Rosa Elena', mainSize: 85, subSize: 14, spacing: 8 },
+            { id: 129, category: 'angel', font: "'Niconne', cursive", main: 'Angel', sub: '☆ R E A ☆', mainSize: 90, subSize: 11, spacing: 12 },
+            { id: 130, category: 'angel', font: "'Berkshire Swash', cursive", main: '⚜ Angel ⚜', sub: 'Rosa Elena Angel', mainSize: 75, subSize: 12, spacing: 6 },
+            { id: 131, category: 'angel', font: "'Clicker Script', cursive", main: '❀ Angel ❀', sub: 'REA', mainSize: 85, subSize: 13, spacing: 10 },
+            { id: 132, category: 'angel', font: "'Rouge Script', cursive", main: 'Angel', sub: '— Rosa Elena Angel —', mainSize: 90, subSize: 12, spacing: 4 },
+            { id: 133, category: 'angel', font: "'Yellowtail', cursive", main: '✾ Angel ✾', sub: 'Rosa Elena', mainSize: 85, subSize: 14, spacing: 8 },
+
+            // Apilado / Stacked (20) - R E A en 3 filas
+            { id: 134, category: 'apilado', font: "'Great Vibes', cursive", main: 'R\nE\nA', sub: '', mainSize: 70, subSize: 0, spacing: 0, stacked: true },
+            { id: 135, category: 'apilado', font: "'Dancing Script', cursive", main: 'R\nE\nA', sub: 'Rosa Elena Angel', mainSize: 65, subSize: 11, spacing: 6, weight: 700, stacked: true },
+            { id: 136, category: 'apilado', font: "'Allura', cursive", main: 'R\nE\nA', sub: '', mainSize: 75, subSize: 0, spacing: 0, stacked: true },
+            { id: 137, category: 'apilado', font: "'Sacramento', cursive", main: 'R\nE\nA', sub: 'Angel', mainSize: 80, subSize: 14, spacing: 8, stacked: true },
+            { id: 138, category: 'apilado', font: "'Satisfy', cursive", main: 'R\nE\nA', sub: '', mainSize: 70, subSize: 0, spacing: 0, stacked: true },
+            { id: 139, category: 'apilado', font: "'Lobster', cursive", main: 'R\nE\nA', sub: 'Rosa Elena Angel', mainSize: 65, subSize: 11, spacing: 8, stacked: true },
+            { id: 140, category: 'apilado', font: "'Pacifico', cursive", main: 'R\nE\nA', sub: '', mainSize: 65, subSize: 0, spacing: 0, stacked: true },
+            { id: 141, category: 'apilado', font: "'Caveat', cursive", main: 'R\nE\nA', sub: 'Angel', mainSize: 70, subSize: 13, spacing: 6, weight: 700, stacked: true },
+            { id: 142, category: 'apilado', font: "'Amatic SC', cursive", main: 'R\nE\nA', sub: '', mainSize: 85, subSize: 0, spacing: 0, weight: 700, stacked: true },
+            { id: 143, category: 'apilado', font: "'Kalam', cursive", main: 'R\nE\nA', sub: 'Rosa Elena Angel', mainSize: 60, subSize: 11, spacing: 6, stacked: true },
+            { id: 144, category: 'apilado', font: "'Pinyon Script', cursive", main: 'R\nE\nA', sub: '', mainSize: 75, subSize: 0, spacing: 0, stacked: true },
+            { id: 145, category: 'apilado', font: "'Tangerine', cursive", main: 'R\nE\nA', sub: 'Angel', mainSize: 85, subSize: 13, spacing: 8, weight: 700, stacked: true },
+            { id: 146, category: 'apilado', font: "'Alex Brush', cursive", main: 'R\nE\nA', sub: '', mainSize: 70, subSize: 0, spacing: 0, stacked: true },
+            { id: 147, category: 'apilado', font: "'Italianno', cursive", main: 'R\nE\nA', sub: 'Rosa Elena', mainSize: 80, subSize: 12, spacing: 6, stacked: true },
+            { id: 148, category: 'apilado', font: "'Parisienne', cursive", main: 'R\nE\nA', sub: '', mainSize: 70, subSize: 0, spacing: 0, stacked: true },
+            { id: 149, category: 'apilado', font: "'Marck Script', cursive", main: 'R\nE\nA', sub: 'Angel', mainSize: 75, subSize: 13, spacing: 8, stacked: true },
+            { id: 150, category: 'apilado', font: "'Cookie', cursive", main: 'R\nE\nA', sub: '', mainSize: 70, subSize: 0, spacing: 0, stacked: true },
+            { id: 151, category: 'apilado', font: "'Grand Hotel', cursive", main: 'R\nE\nA', sub: 'Rosa Elena Angel', mainSize: 65, subSize: 11, spacing: 6, stacked: true },
+            { id: 152, category: 'apilado', font: "'Niconne', cursive", main: 'R\nE\nA', sub: '', mainSize: 70, subSize: 0, spacing: 0, stacked: true },
+            { id: 153, category: 'apilado', font: "'Berkshire Swash', cursive", main: 'R\nE\nA', sub: 'Angel', mainSize: 60, subSize: 12, spacing: 8, stacked: true },
+
+            // Minimalista (8)
+            { id: 101, category: 'minimalista', font: "'Caveat', cursive", main: 'REA', sub: '', mainSize: 100, subSize: 0, spacing: 0, weight: 400 },
+            { id: 102, category: 'minimalista', font: "'Dancing Script', cursive", main: 'REA', sub: '', mainSize: 95, subSize: 0, spacing: 0, weight: 400 },
+            { id: 103, category: 'minimalista', font: "'Satisfy', cursive", main: 'REA', sub: '', mainSize: 95, subSize: 0, spacing: 0 },
+            { id: 104, category: 'minimalista', font: "'Great Vibes', cursive", main: 'REA', sub: '', mainSize: 90, subSize: 0, spacing: 0 },
+            { id: 105, category: 'minimalista', font: "'Shadows Into Light', cursive", main: 'R E A', sub: '', mainSize: 80, subSize: 0, spacing: 0 },
+            { id: 106, category: 'minimalista', font: "'Amatic SC', cursive", main: 'REA', sub: '', mainSize: 120, subSize: 0, spacing: 0, weight: 700 },
+            { id: 107, category: 'minimalista', font: "'Kalam', cursive", main: 'rea', sub: '', mainSize: 90, subSize: 0, spacing: 0 },
+            { id: 108, category: 'minimalista', font: "'Lobster', cursive", main: 'REA', sub: '', mainSize: 95, subSize: 0, spacing: 0 },
+        ];
+
+        let currentStyle = logoStyles[0];
+        let currentIndex = 0;
+        let filteredStyles = [...logoStyles];
+        let mainColor = '#1a1a2e';
+        let subColor = '#666666';
+
+        function init() {
+            renderStyleGrid();
+            applyStyle(logoStyles[0]);
+        }
+
+        function renderStyleGrid(category = 'all') {
+            const grid = document.getElementById('styleGrid');
+            filteredStyles = category === 'all'
+                ? [...logoStyles]
+                : logoStyles.filter(s => s.category === category);
+
+            grid.innerHTML = filteredStyles.map((style, index) => `
+                <div class="style-card ${style.id === currentStyle.id ? 'active' : ''}"
+                     onclick="selectStyle(${style.id})" data-id="${style.id}">
+                    <div class="card-preview" style="font-family: ${style.font}; font-weight: ${style.weight || 400}; line-height: ${style.stacked ? '0.85' : '1'}; font-size: ${style.stacked ? '18px' : '24px'};">
+                        ${style.stacked ? style.main.split('\n').join('<br>') : style.main}
+                    </div>
+                    <div class="card-name">${style.category}</div>
+                </div>
+            `).join('');
+
+            updateCounter();
+        }
+
+        function filterStyles(category) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderStyleGrid(category);
+        }
+
+        function selectStyle(id) {
+            const style = logoStyles.find(s => s.id === id);
+            if (style) {
+                currentStyle = style;
+                currentIndex = filteredStyles.findIndex(s => s.id === id);
+                applyStyle(style);
+                updateActiveCard();
+                updateCounter();
+            }
+        }
+
+        function applyStyle(style) {
+            const main = document.getElementById('logoMain');
+            const sub = document.getElementById('logoSub');
+
+            main.style.fontFamily = style.font;
+            main.style.fontSize = style.mainSize + 'px';
+            main.style.fontWeight = style.weight || 400;
+            main.style.color = mainColor;
+
+            // Handle stacked text (R\nE\nA)
+            if (style.stacked) {
+                main.innerHTML = style.main.split('\n').join('<br>');
+                main.style.lineHeight = '0.9';
+            } else {
+                main.textContent = style.main;
+                main.style.lineHeight = '1.1';
+            }
+
+            if (style.sub) {
+                sub.style.display = 'block';
+                sub.style.fontSize = style.subSize + 'px';
+                sub.style.letterSpacing = style.spacing + 'px';
+                sub.style.color = subColor;
+                sub.textContent = style.sub;
+                sub.style.marginTop = style.stacked ? '15px' : '8px';
+            } else {
+                sub.style.display = 'none';
+            }
+        }
+
+        function updateActiveCard() {
+            document.querySelectorAll('.style-card').forEach(card => {
+                card.classList.toggle('active', parseInt(card.dataset.id) === currentStyle.id);
+            });
+        }
+
+        function updateCounter() {
+            const index = filteredStyles.findIndex(s => s.id === currentStyle.id) + 1;
+            document.getElementById('variationCounter').textContent =
+                `Variación ${index || 1} de ${filteredStyles.length}`;
+        }
+
+        function randomize() {
+            const randomIndex = Math.floor(Math.random() * filteredStyles.length);
+            const style = filteredStyles[randomIndex];
+            currentStyle = style;
+            currentIndex = randomIndex;
+            applyStyle(style);
+            updateActiveCard();
+            updateCounter();
+
+            // Scroll to card
+            const card = document.querySelector(`.style-card[data-id="${style.id}"]`);
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.getElementById('generateBtn').addEventListener('click', randomize);
+
+        function setBg(type) {
+            const container = document.getElementById('previewContainer');
+            container.classList.remove('dark-bg', 'transparent-bg');
+            if (type === 'dark') container.classList.add('dark-bg');
+            else if (type === 'transparent') container.classList.add('transparent-bg');
+        }
+
+        function updateColors() {
+            mainColor = document.getElementById('mainColor').value;
+            subColor = document.getElementById('subColor').value;
+            document.getElementById('logoMain').style.color = mainColor;
+            document.getElementById('logoSub').style.color = subColor;
+        }
+
+        function showNotice(text) {
+            const notice = document.getElementById('notice');
+            notice.textContent = text;
+            notice.classList.add('show');
+            setTimeout(() => notice.classList.remove('show'), 2000);
+        }
+
+        function downloadSVG() {
+            const size = parseInt(document.getElementById('sizeSelect').value);
+            const style = currentStyle;
+            const subText = style.sub;
+
+            const mainFontSize = (style.mainSize / 90) * size * 0.22;
+            const subFontSize = (style.subSize / 14) * size * 0.035;
+            const height = style.stacked ? size * 0.7 : size * 0.5;
+
+            let mainTextSVG = '';
+            if (style.stacked) {
+                const lines = style.main.split('\n');
+                const lineHeight = mainFontSize * 0.95;
+                const startY = height * 0.25;
+                mainTextSVG = lines.map((line, i) => `
+                    <text x="50%" y="${startY + (i * lineHeight)}"
+                        font-family="${style.font}"
+                        font-size="${mainFontSize}"
+                        font-weight="${style.weight || 400}"
+                        fill="${mainColor}"
+                        text-anchor="middle">${escapeXml(line)}</text>`).join('');
+            } else {
+                mainTextSVG = `<text x="50%" y="45%"
+                    font-family="${style.font}"
+                    font-size="${mainFontSize}"
+                    font-weight="${style.weight || 400}"
+                    fill="${mainColor}"
+                    text-anchor="middle"
+                    dominant-baseline="middle">${escapeXml(style.main)}</text>`;
+            }
+
+            let subtextSVG = '';
+            if (subText) {
+                const subY = style.stacked ? '85%' : '72%';
+                subtextSVG = `<text x="50%" y="${subY}"
+                    font-family="'Segoe UI', sans-serif"
+                    font-size="${subFontSize}"
+                    fill="${subColor}"
+                    text-anchor="middle"
+                    letter-spacing="${style.spacing * 0.5}">${escapeXml(subText)}</text>`;
+            }
+
+            const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${height}" viewBox="0 0 ${size} ${height}">
+    ${mainTextSVG}
+    ${subtextSVG}
+</svg>`;
+
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = 'REA-logo.svg';
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+            showNotice('SVG Bajado!');
+        }
+
+        function escapeXml(text) {
+            return text.replace(/[<>&'"]/g, c => ({
+                '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;'
+            }[c]));
+        }
+
+        function downloadPNG() {
+            const size = parseInt(document.getElementById('sizeSelect').value);
+            const height = currentStyle.stacked ? size * 0.7 : size * 0.5;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawLogoToCanvas(ctx, size);
+
+            const link = document.createElement('a');
+            link.download = 'REA-logo.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showNotice('PNG Bajado!');
+        }
+
+        function downloadPNGTransparent() {
+            const size = parseInt(document.getElementById('sizeSelect').value);
+            const height = currentStyle.stacked ? size * 0.7 : size * 0.5;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawLogoToCanvas(ctx, size);
+
+            const link = document.createElement('a');
+            link.download = 'REA-logo-transparent.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showNotice('PNG Transparente Bajado!');
+        }
+
+        function drawLogoToCanvas(ctx, size) {
+            const style = currentStyle;
+            const height = style.stacked ? size * 0.7 : size * 0.5;
+
+            // Main text
+            const mainFontSize = (style.mainSize / 90) * size * 0.2;
+            ctx.font = `${style.weight || 400} ${mainFontSize}px ${style.font.replace(/'/g, '')}`;
+            ctx.fillStyle = mainColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            if (style.stacked) {
+                const lines = style.main.split('\n');
+                const lineHeight = mainFontSize * 0.95;
+                const startY = height * 0.2;
+                lines.forEach((line, i) => {
+                    ctx.fillText(line, size / 2, startY + (i * lineHeight));
+                });
+            } else {
+                ctx.fillText(style.main, size / 2, height * 0.45);
+            }
+
+            // Subtext
+            if (style.sub) {
+                const subFontSize = (style.subSize / 14) * size * 0.032;
+                ctx.font = `${subFontSize}px 'Segoe UI', sans-serif`;
+                ctx.fillStyle = subColor;
+                const subY = style.stacked ? height * 0.88 : height * 0.75;
+                ctx.fillText(style.sub, size / 2, subY);
+            }
+        }
+
+        // Initialize
+        init();
+        // PWA Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').style.display = 'inline-block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(result => {
+                    if (result.outcome === 'accepted') {
+                        alert('App instalada!');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBtn').style.display = 'none';
+                });
+            }
+        }
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed:', err));
+        }
+    </script>
+</body>
+</html>

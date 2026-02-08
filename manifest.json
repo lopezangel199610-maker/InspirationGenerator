@@ -1,0 +1,26 @@
+{
+  "name": "Generador de Diseños Chistosos",
+  "short_name": "Diseños",
+  "description": "Genera frases chistosas con imágenes para Cricut - barrio style",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#ff6b6b",
+  "orientation": "any",
+  "categories": ["graphics", "productivity", "entertainment"],
+  "lang": "es",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

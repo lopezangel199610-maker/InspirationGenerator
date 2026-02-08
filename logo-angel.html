@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ff6b6b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Diseños">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Angel Owl Wings Logo Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Great+Vibes&family=Satisfy&family=Pacifico&family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Permanent+Marker&family=Shadows+Into+Light&family=Amatic+SC:wght@400;700&family=Lobster&family=Sacramento&family=Allura&family=Alex+Brush&family=Pinyon+Script&family=Tangerine:wght@400;700&family=Italianno&family=Marck+Script&family=Parisienne&family=Petit+Formal+Script&family=Rouge+Script&family=Yellowtail&family=Mr+Dafoe&family=Norican&family=Cookie&family=Courgette&family=Niconne&family=Grand+Hotel&family=Playball&family=Berkshire+Swash&family=Clicker+Script&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #0d0d2b 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffd700, #fff, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8888aa;
+            margin-bottom: 25px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        select {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: 2px solid #3a3a5c;
+            border-radius: 25px;
+            background: #1a1a2e;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .generate-btn {
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .generate-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .preview-section {
+            background: linear-gradient(135deg, #1a1a2e, #252545);
+            border-radius: 25px;
+            padding: 30px;
+            border: 2px solid #3a3a5c;
+            margin-bottom: 25px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .preview-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            padding: 6px 15px;
+            border-radius: 15px;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            border: 1px solid #4a4a6c;
+            border-radius: 15px;
+            background: transparent;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 350px;
+            background: #fff;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-container.dark-bg {
+            background: #0a0a1a;
+        }
+
+        .preview-container.transparent-bg {
+            background: repeating-conic-gradient(#ddd 0% 25%, #fff 0% 50%) 50% / 20px 20px;
+        }
+
+        .logo-preview {
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .wing {
+            font-size: 80px;
+            line-height: 1;
+            transition: all 0.3s;
+        }
+
+        .wing-left {
+            transform: scaleX(-1);
+        }
+
+        .logo-text {
+            font-size: 85px;
+            line-height: 1;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+
+        .logo-sub {
+            margin-top: 15px;
+            font-size: 14px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        .variation-info {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+
+        .color-controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .color-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-group label {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        input[type="color"] {
+            width: 45px;
+            height: 45px;
+            border: 2px solid #3a3a5c;
+            border-radius: 12px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .style-section {
+            background: linear-gradient(135deg, #1a1a2e, #252545);
+            border-radius: 25px;
+            padding: 25px;
+            border: 2px solid #3a3a5c;
+            margin-bottom: 25px;
+        }
+
+        .style-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            max-height: 450px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .style-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .style-grid::-webkit-scrollbar-track {
+            background: #1a1a2e;
+            border-radius: 4px;
+        }
+
+        .style-grid::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            border-radius: 4px;
+        }
+
+        .style-card {
+            padding: 20px 12px;
+            border: 2px solid #3a3a5c;
+            border-radius: 15px;
+            background: #1a1a2e;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .style-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .style-card.active {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .card-preview {
+            font-size: 22px;
+            margin-bottom: 8px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .card-preview .mini-wing {
+            font-size: 16px;
+        }
+
+        .card-name {
+            font-size: 0.65rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .download-section {
+            background: linear-gradient(135deg, #1a1a2e, #252545);
+            border-radius: 25px;
+            padding: 25px;
+            border: 2px solid #3a3a5c;
+        }
+
+        .download-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .download-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .download-btn {
+            padding: 14px 28px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 2px solid #3a3a5c;
+            border-radius: 18px;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .download-btn.primary {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+        }
+
+        .download-btn.primary:hover {
+            transform: scale(1.03);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            border: 1px solid #3a3a5c;
+            border-radius: 20px;
+            background: transparent;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab:hover, .tab.active {
+            border-color: #ffd700;
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .notice {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: transform 0.3s;
+            z-index: 100;
+        }
+
+        .notice.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .logo-text { font-size: 50px; }
+            .wing { font-size: 45px; }
+            .style-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border: 2px solid #3a3a5c;
+            border-radius: 20px;
+            background: transparent;
+            color: #a0a0c0;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            border-color: transparent;
+        }
+
+        .install-btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border: 2px solid #4ecdc4;
+            border-radius: 20px;
+            background: transparent;
+            color: #4ecdc4;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .install-btn:hover {
+            background: #4ecdc4;
+            color: #0f0f1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-bar">
+            <a class="nav-link" href="index.html">Frases</a>
+            <a class="nav-link active" href="logo-angel.html">Logo Angel</a>
+            <a class="nav-link" href="logo-rea.html">Logo REA</a>
+            <button class="install-btn" id="installBtn" onclick="installApp()">Instalar App</button>
+        </nav>
+        <h1>Angel Owl Wings <span class="badge">Cricut Ready</span></h1>
+        <p class="subtitle">Diseños Únicos con Alas de Búho - Rosa Elena Angel</p>
+
+        <div class="controls">
+            <select id="categorySelect" onchange="filterByCategory()">
+                <option value="all">Todos los Estilos</option>
+                <option value="owlwing">Alas de Búho</option>
+                <option value="feather">Plumas</option>
+                <option value="mystic">Místico</option>
+                <option value="night">Nocturno</option>
+                <option value="elegant">Elegante</option>
+                <option value="minimal">Minimalista</option>
+                <option value="bold">Bold</option>
+            </select>
+            <button class="generate-btn" onclick="randomize()">Generar Diseño</button>
+        </div>
+
+        <div class="preview-section">
+            <div class="preview-header">
+                <span class="preview-label">Vista Previa</span>
+                <div class="preview-actions">
+                    <button class="btn" onclick="setBg('light')">Claro</button>
+                    <button class="btn" onclick="setBg('dark')">Oscuro</button>
+                    <button class="btn" onclick="setBg('transparent')">Transparente</button>
+                </div>
+            </div>
+
+            <div class="preview-container" id="previewContainer">
+                <div class="logo-preview">
+                    <div class="logo-wrapper" id="logoWrapper">
+                        <span class="wing wing-left" id="wingLeft">𐦋</span>
+                        <span class="logo-text" id="logoText">Angel</span>
+                        <span class="wing wing-right" id="wingRight">𐦋</span>
+                    </div>
+                    <div class="logo-sub" id="logoSub">Rosa Elena</div>
+                </div>
+            </div>
+
+            <div class="variation-info" id="variationInfo">Diseño 1 de 120</div>
+
+            <div class="color-controls">
+                <div class="color-group">
+                    <label>Texto:</label>
+                    <input type="color" id="textColor" value="#1a1a2e" onchange="updateColors()">
+                </div>
+                <div class="color-group">
+                    <label>Alas:</label>
+                    <input type="color" id="wingColor" value="#1a1a2e" onchange="updateColors()">
+                </div>
+                <div class="color-group">
+                    <label>Subtexto:</label>
+                    <input type="color" id="subColor" value="#666666" onchange="updateColors()">
+                </div>
+            </div>
+        </div>
+
+        <div class="style-section">
+            <div class="tabs">
+                <button class="tab active" onclick="filterByCategory('all', this)">Todos</button>
+                <button class="tab" onclick="filterByCategory('owlwing', this)">Alas Búho</button>
+                <button class="tab" onclick="filterByCategory('feather', this)">Plumas</button>
+                <button class="tab" onclick="filterByCategory('mystic', this)">Místico</button>
+                <button class="tab" onclick="filterByCategory('night', this)">Nocturno</button>
+                <button class="tab" onclick="filterByCategory('elegant', this)">Elegante</button>
+                <button class="tab" onclick="filterByCategory('minimal', this)">Minimal</button>
+                <button class="tab" onclick="filterByCategory('bold', this)">Bold</button>
+            </div>
+            <div class="style-grid" id="styleGrid"></div>
+        </div>
+
+        <div class="download-section">
+            <div class="download-row">
+                <label style="color: #888;">Tamaño:</label>
+                <select id="sizeSelect">
+                    <option value="800">Mediano (800px)</option>
+                    <option value="1500" selected>Grande (1500px)</option>
+                    <option value="2500">XL (2500px)</option>
+                    <option value="4000">Print (4000px)</option>
+                </select>
+                <div class="download-buttons">
+                    <button class="download-btn primary" onclick="downloadSVG()">Bajar SVG</button>
+                    <button class="download-btn" onclick="downloadPNG()">PNG</button>
+                    <button class="download-btn" onclick="downloadPNGTransparent()">PNG Transparente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notice" id="notice">Descargado!</div>
+
+    <script>
+        // Owl Wing Designs - Diseños únicos de alas de búho
+        const wings = {
+            // Owl Wings - Main Styles
+            owl1: { left: '🦉', right: '🦉', name: 'Búho Clásico' },
+            owl2: { left: '༗', right: '༗', name: 'Ala Mística' },
+            owl3: { left: '߷', right: '߷', name: 'Pluma Búho' },
+            owl4: { left: '❯❯', right: '❮❮', name: 'Alas Dobles' },
+            owl5: { left: '》', right: '《', name: 'Ala Angular' },
+            owl6: { left: '⟫', right: '⟪', name: 'Ala Moderna' },
+
+            // Feathered Owl Wings
+            feather1: { left: '𐦋', right: '𐦋', name: 'Pluma Antigua' },
+            feather2: { left: '🪶', right: '🪶', name: 'Pluma Natural' },
+            feather3: { left: '❮❮❮', right: '❯❯❯', name: 'Triple Pluma' },
+            feather4: { left: '≪', right: '≫', name: 'Pluma Doble' },
+            feather5: { left: '⋘', right: '⋙', name: 'Pluma Triple' },
+            feather6: { left: '«', right: '»', name: 'Pluma Simple' },
+
+            // Mystical Owl Wings
+            mystic1: { left: '꧁', right: '꧂', name: 'Búho Místico' },
+            mystic2: { left: '༺', right: '༻', name: 'Ala Tibetana' },
+            mystic3: { left: '࿐', right: '࿐', name: 'Espíritu Búho' },
+            mystic4: { left: '۞', right: '۞', name: 'Ojo de Búho' },
+            mystic5: { left: '✧', right: '✧', name: 'Destello Búho' },
+            mystic6: { left: '⊱', right: '⊰', name: 'Ala Curva' },
+
+            // Night Owl Wings
+            night1: { left: '☽', right: '☾', name: 'Luna Búho' },
+            night2: { left: '✦', right: '✦', name: 'Estrella Noche' },
+            night3: { left: '★', right: '★', name: 'Noche Estrellada' },
+            night4: { left: '✶', right: '✶', name: 'Brillo Nocturno' },
+            night5: { left: '❂', right: '❂', name: 'Sol de Noche' },
+            night6: { left: '✵', right: '✵', name: 'Estrella Búho' },
+
+            // Elegant Owl Wings
+            elegant1: { left: '❧', right: '☙', name: 'Elegante Búho' },
+            elegant2: { left: '❦', right: '❦', name: 'Corazón Pluma' },
+            elegant3: { left: '๑', right: '๑', name: 'Ala Suave' },
+            elegant4: { left: '⁂', right: '⁂', name: 'Triple Punto' },
+            elegant5: { left: '❈', right: '❈', name: 'Flor Búho' },
+            elegant6: { left: '✿', right: '✿', name: 'Floral Búho' },
+
+            // Minimalist Owl Wings
+            mini1: { left: '›', right: '‹', name: 'Minimal' },
+            mini2: { left: '•', right: '•', name: 'Punto' },
+            mini3: { left: '—', right: '—', name: 'Línea' },
+            mini4: { left: '/', right: '\\', name: 'Slash' },
+            mini5: { left: '|', right: '|', name: 'Barra' },
+            mini6: { left: '', right: '', name: 'Sin Alas' },
+
+            // Bold Owl Wings
+            bold1: { left: '◄◄', right: '►►', name: 'Ala Fuerte' },
+            bold2: { left: '◀◀', right: '▶▶', name: 'Flecha Doble' },
+            bold3: { left: '◂◂', right: '▸▸', name: 'Punta Doble' },
+            bold4: { left: '⟨⟨', right: '⟩⟩', name: 'Angular Doble' },
+            bold5: { left: '❬❬', right: '❭❭', name: 'Curva Doble' },
+            bold6: { left: '⟪', right: '⟫', name: 'Grande' },
+        };
+
+        // 120 Unique Owl Wing Logo Designs
+        const designs = [
+            // Owl Wings (20)
+            { id: 1, cat: 'owlwing', font: "'Great Vibes', cursive", text: 'Angel', wing: 'owl1', sub: 'Rosa Elena', size: 85, subSize: 14 },
+            { id: 2, cat: 'owlwing', font: "'Sacramento', cursive", text: 'Angel', wing: 'owl2', sub: '', size: 100, subSize: 0 },
+            { id: 3, cat: 'owlwing', font: "'Allura', cursive", text: 'Angel', wing: 'owl3', sub: 'Rosa Elena Angel', size: 80, subSize: 12 },
+            { id: 4, cat: 'owlwing', font: "'Dancing Script', cursive", text: 'Angel', wing: 'owl4', sub: 'R E A', size: 85, subSize: 11, weight: 700 },
+            { id: 5, cat: 'owlwing', font: "'Pinyon Script', cursive", text: 'Angel', wing: 'owl5', sub: 'Rosa Elena', size: 90, subSize: 13 },
+            { id: 6, cat: 'owlwing', font: "'Tangerine', cursive", text: 'Angel', wing: 'owl6', sub: '', size: 110, subSize: 0, weight: 700 },
+            { id: 7, cat: 'owlwing', font: "'Cinzel', serif", text: 'ANGEL', wing: 'owl1', sub: 'Rosa Elena', size: 70, subSize: 14, weight: 600 },
+            { id: 8, cat: 'owlwing', font: "'Cormorant Garamond', serif", text: 'Angel', wing: 'owl2', sub: '', size: 85, subSize: 0, weight: 500 },
+            { id: 9, cat: 'owlwing', font: "'Playfair Display', serif", text: 'Angel', wing: 'owl3', sub: 'R.E.A', size: 80, subSize: 13, weight: 500 },
+            { id: 10, cat: 'owlwing', font: "'Lobster', cursive", text: 'angel', wing: 'owl4', sub: '', size: 85, subSize: 0 },
+            { id: 11, cat: 'owlwing', font: "'Pacifico', cursive", text: 'Angel', wing: 'owl5', sub: 'Rosa Elena Angel', size: 80, subSize: 11 },
+            { id: 12, cat: 'owlwing', font: "'Satisfy', cursive", text: 'Angel', wing: 'owl6', sub: '', size: 90, subSize: 0 },
+            { id: 13, cat: 'owlwing', font: "'Caveat', cursive", text: 'angel', wing: 'owl1', sub: 'Rosa Elena', size: 90, subSize: 13, weight: 700 },
+            { id: 14, cat: 'owlwing', font: "'Kalam', cursive", text: 'Angel', wing: 'owl2', sub: '', size: 80, subSize: 0 },
+            { id: 15, cat: 'owlwing', font: "'Alex Brush', cursive", text: 'Angel', wing: 'owl3', sub: 'R E A', size: 85, subSize: 12 },
+            { id: 16, cat: 'owlwing', font: "'Italianno', cursive", text: 'ANGEL', wing: 'owl4', sub: '', size: 95, subSize: 0 },
+            { id: 17, cat: 'owlwing', font: "'Parisienne', cursive", text: 'Angel', wing: 'owl5', sub: 'Rosa Elena', size: 85, subSize: 13 },
+            { id: 18, cat: 'owlwing', font: "'Marck Script', cursive", text: 'angel', wing: 'owl6', sub: '', size: 90, subSize: 0 },
+            { id: 19, cat: 'owlwing', font: "'Clicker Script', cursive", text: 'Angel', wing: 'owl1', sub: 'Rosa Elena Angel', size: 80, subSize: 11 },
+            { id: 20, cat: 'owlwing', font: "'Rouge Script', cursive", text: 'Angel', wing: 'owl2', sub: '', size: 85, subSize: 0 },
+
+            // Feathers (18)
+            { id: 21, cat: 'feather', font: "'Great Vibes', cursive", text: 'Angel', wing: 'feather1', sub: 'Rosa Elena', size: 85, subSize: 14 },
+            { id: 22, cat: 'feather', font: "'Sacramento', cursive", text: 'Angel', wing: 'feather2', sub: '', size: 100, subSize: 0 },
+            { id: 23, cat: 'feather', font: "'Allura', cursive", text: 'Angel', wing: 'feather3', sub: 'R E A', size: 80, subSize: 12 },
+            { id: 24, cat: 'feather', font: "'Dancing Script', cursive", text: 'angel', wing: 'feather4', sub: 'Rosa Elena Angel', size: 85, subSize: 11, weight: 700 },
+            { id: 25, cat: 'feather', font: "'Pinyon Script', cursive", text: 'Angel', wing: 'feather5', sub: '', size: 90, subSize: 0 },
+            { id: 26, cat: 'feather', font: "'Tangerine', cursive", text: 'ANGEL', wing: 'feather6', sub: 'Rosa Elena', size: 105, subSize: 13, weight: 700 },
+            { id: 27, cat: 'feather', font: "'Cinzel', serif", text: 'Angel', wing: 'feather1', sub: '', size: 70, subSize: 0, weight: 600 },
+            { id: 28, cat: 'feather', font: "'Cormorant Garamond', serif", text: 'angel', wing: 'feather2', sub: 'R.E.A', size: 85, subSize: 12, weight: 500 },
+            { id: 29, cat: 'feather', font: "'Playfair Display', serif", text: 'Angel', wing: 'feather3', sub: '', size: 80, subSize: 0, weight: 500 },
+            { id: 30, cat: 'feather', font: "'Lobster', cursive", text: 'Angel', wing: 'feather4', sub: 'Rosa Elena', size: 85, subSize: 13 },
+            { id: 31, cat: 'feather', font: "'Pacifico', cursive", text: 'angel', wing: 'feather5', sub: '', size: 80, subSize: 0 },
+            { id: 32, cat: 'feather', font: "'Satisfy', cursive", text: 'Angel', wing: 'feather6', sub: 'Rosa Elena Angel', size: 85, subSize: 11 },
+            { id: 33, cat: 'feather', font: "'Caveat', cursive", text: 'ANGEL', wing: 'feather1', sub: '', size: 90, subSize: 0, weight: 700 },
+            { id: 34, cat: 'feather', font: "'Kalam', cursive", text: 'Angel', wing: 'feather2', sub: 'R E A', size: 80, subSize: 12 },
+            { id: 35, cat: 'feather', font: "'Alex Brush', cursive", text: 'angel', wing: 'feather3', sub: '', size: 85, subSize: 0 },
+            { id: 36, cat: 'feather', font: "'Italianno', cursive", text: 'Angel', wing: 'feather4', sub: 'Rosa Elena', size: 95, subSize: 13 },
+            { id: 37, cat: 'feather', font: "'Parisienne', cursive", text: 'Angel', wing: 'feather5', sub: '', size: 85, subSize: 0 },
+            { id: 38, cat: 'feather', font: "'Marck Script', cursive", text: 'ANGEL', wing: 'feather6', sub: 'Rosa Elena Angel', size: 85, subSize: 11 },
+
+            // Mystic (18)
+            { id: 39, cat: 'mystic', font: "'Great Vibes', cursive", text: 'Angel', wing: 'mystic1', sub: 'Rosa Elena', size: 85, subSize: 14 },
+            { id: 40, cat: 'mystic', font: "'Sacramento', cursive", text: 'angel', wing: 'mystic2', sub: '', size: 100, subSize: 0 },
+            { id: 41, cat: 'mystic', font: "'Allura', cursive", text: 'Angel', wing: 'mystic3', sub: 'R E A', size: 80, subSize: 12 },
+            { id: 42, cat: 'mystic', font: "'Dancing Script', cursive", text: 'Angel', wing: 'mystic4', sub: '', size: 85, subSize: 0, weight: 700 },
+            { id: 43, cat: 'mystic', font: "'Pinyon Script', cursive", text: 'ANGEL', wing: 'mystic5', sub: 'Rosa Elena Angel', size: 85, subSize: 11 },
+            { id: 44, cat: 'mystic', font: "'Tangerine', cursive", text: 'Angel', wing: 'mystic6', sub: '', size: 105, subSize: 0, weight: 700 },
+            { id: 45, cat: 'mystic', font: "'Cinzel', serif", text: 'angel', wing: 'mystic1', sub: 'Rosa Elena', size: 70, subSize: 13, weight: 600 },
+            { id: 46, cat: 'mystic', font: "'Cormorant Garamond', serif", text: 'Angel', wing: 'mystic2', sub: '', size: 85, subSize: 0, weight: 500 },
+            { id: 47, cat: 'mystic', font: "'Playfair Display', serif", text: 'Angel', wing: 'mystic3', sub: 'R.E.A', size: 80, subSize: 12, weight: 500 },
+            { id: 48, cat: 'mystic', font: "'Lobster', cursive", text: 'ANGEL', wing: 'mystic4', sub: '', size: 85, subSize: 0 },
+            { id: 49, cat: 'mystic', font: "'Pacifico', cursive", text: 'Angel', wing: 'mystic5', sub: 'Rosa Elena', size: 80, subSize: 13 },
+            { id: 50, cat: 'mystic', font: "'Satisfy', cursive", text: 'angel', wing: 'mystic6', sub: '', size: 85, subSize: 0 },
+            { id: 51, cat: 'mystic', font: "'Caveat', cursive", text: 'Angel', wing: 'mystic1', sub: 'Rosa Elena Angel', size: 90, subSize: 11, weight: 700 },
+            { id: 52, cat: 'mystic', font: "'Kalam', cursive", text: 'Angel', wing: 'mystic2', sub: '', size: 80, subSize: 0 },
+            { id: 53, cat: 'mystic', font: "'Alex Brush', cursive", text: 'ANGEL', wing: 'mystic3', sub: 'R E A', size: 80, subSize: 12 },
+            { id: 54, cat: 'mystic', font: "'Italianno', cursive", text: 'angel', wing: 'mystic4', sub: '', size: 95, subSize: 0 },
+            { id: 55, cat: 'mystic', font: "'Parisienne', cursive", text: 'Angel', wing: 'mystic5', sub: 'Rosa Elena', size: 85, subSize: 13 },
+            { id: 56, cat: 'mystic', font: "'Marck Script', cursive", text: 'Angel', wing: 'mystic6', sub: '', size: 90, subSize: 0 },
+
+            // Night Owl (18)
+            { id: 57, cat: 'night', font: "'Great Vibes', cursive", text: 'Angel', wing: 'night1', sub: '☽ Rosa Elena ☾', size: 85, subSize: 12 },
+            { id: 58, cat: 'night', font: "'Sacramento', cursive", text: 'angel', wing: 'night2', sub: '', size: 100, subSize: 0 },
+            { id: 59, cat: 'night', font: "'Allura', cursive", text: 'Angel', wing: 'night3', sub: 'Rosa Elena Angel', size: 80, subSize: 11 },
+            { id: 60, cat: 'night', font: "'Dancing Script', cursive", text: 'Angel', wing: 'night4', sub: '', size: 85, subSize: 0, weight: 700 },
+            { id: 61, cat: 'night', font: "'Pinyon Script', cursive", text: 'ANGEL', wing: 'night5', sub: 'R E A', size: 85, subSize: 12 },
+            { id: 62, cat: 'night', font: "'Tangerine', cursive", text: 'Angel', wing: 'night6', sub: '', size: 105, subSize: 0, weight: 700 },
+            { id: 63, cat: 'night', font: "'Cinzel', serif", text: 'angel', wing: 'night1', sub: 'Rosa Elena', size: 70, subSize: 13, weight: 600 },
+            { id: 64, cat: 'night', font: "'Cormorant Garamond', serif", text: 'Angel', wing: 'night2', sub: '', size: 85, subSize: 0, weight: 500 },
+            { id: 65, cat: 'night', font: "'Playfair Display', serif", text: 'Angel', wing: 'night3', sub: '✦ Rosa Elena ✦', size: 80, subSize: 11, weight: 500 },
+            { id: 66, cat: 'night', font: "'Lobster', cursive", text: 'ANGEL', wing: 'night4', sub: '', size: 85, subSize: 0 },
+            { id: 67, cat: 'night', font: "'Pacifico', cursive", text: 'Angel', wing: 'night5', sub: 'R.E.A', size: 80, subSize: 12 },
+            { id: 68, cat: 'night', font: "'Satisfy', cursive", text: 'angel', wing: 'night6', sub: '', size: 85, subSize: 0 },
+            { id: 69, cat: 'night', font: "'Caveat', cursive", text: 'Angel', wing: 'night1', sub: 'Rosa Elena Angel', size: 90, subSize: 11, weight: 700 },
+            { id: 70, cat: 'night', font: "'Kalam', cursive", text: 'Angel', wing: 'night2', sub: '', size: 80, subSize: 0 },
+            { id: 71, cat: 'night', font: "'Alex Brush', cursive", text: 'ANGEL', wing: 'night3', sub: 'Rosa Elena', size: 80, subSize: 13 },
+            { id: 72, cat: 'night', font: "'Italianno', cursive", text: 'angel', wing: 'night4', sub: '', size: 95, subSize: 0 },
+            { id: 73, cat: 'night', font: "'Parisienne', cursive", text: 'Angel', wing: 'night5', sub: 'R E A', size: 85, subSize: 12 },
+            { id: 74, cat: 'night', font: "'Marck Script', cursive", text: 'Angel', wing: 'night6', sub: '', size: 90, subSize: 0 },
+
+            // Elegant Owl (18)
+            { id: 75, cat: 'elegant', font: "'Great Vibes', cursive", text: 'Angel', wing: 'elegant1', sub: 'Rosa Elena', size: 85, subSize: 14 },
+            { id: 76, cat: 'elegant', font: "'Sacramento', cursive", text: 'angel', wing: 'elegant2', sub: '', size: 100, subSize: 0 },
+            { id: 77, cat: 'elegant', font: "'Allura', cursive", text: 'Angel', wing: 'elegant3', sub: 'Rosa Elena Angel', size: 80, subSize: 11 },
+            { id: 78, cat: 'elegant', font: "'Dancing Script', cursive", text: 'Angel', wing: 'elegant4', sub: '', size: 85, subSize: 0, weight: 700 },
+            { id: 79, cat: 'elegant', font: "'Pinyon Script', cursive", text: 'ANGEL', wing: 'elegant5', sub: 'R E A', size: 85, subSize: 12 },
+            { id: 80, cat: 'elegant', font: "'Tangerine', cursive", text: 'Angel', wing: 'elegant6', sub: '', size: 105, subSize: 0, weight: 700 },
+            { id: 81, cat: 'elegant', font: "'Cinzel', serif", text: 'angel', wing: 'elegant1', sub: 'Rosa Elena', size: 70, subSize: 13, weight: 600 },
+            { id: 82, cat: 'elegant', font: "'Cormorant Garamond', serif", text: 'Angel', wing: 'elegant2', sub: '', size: 85, subSize: 0, weight: 500 },
+            { id: 83, cat: 'elegant', font: "'Playfair Display', serif", text: 'Angel', wing: 'elegant3', sub: 'R.E.A', size: 80, subSize: 12, weight: 500 },
+            { id: 84, cat: 'elegant', font: "'Lobster', cursive", text: 'ANGEL', wing: 'elegant4', sub: '', size: 85, subSize: 0 },
+            { id: 85, cat: 'elegant', font: "'Pacifico', cursive", text: 'Angel', wing: 'elegant5', sub: 'Rosa Elena', size: 80, subSize: 13 },
+            { id: 86, cat: 'elegant', font: "'Satisfy', cursive", text: 'angel', wing: 'elegant6', sub: '', size: 85, subSize: 0 },
+            { id: 87, cat: 'elegant', font: "'Caveat', cursive", text: 'Angel', wing: 'elegant1', sub: 'Rosa Elena Angel', size: 90, subSize: 11, weight: 700 },
+            { id: 88, cat: 'elegant', font: "'Kalam', cursive", text: 'Angel', wing: 'elegant2', sub: '', size: 80, subSize: 0 },
+            { id: 89, cat: 'elegant', font: "'Alex Brush', cursive", text: 'ANGEL', wing: 'elegant3', sub: 'R E A', size: 80, subSize: 12 },
+            { id: 90, cat: 'elegant', font: "'Italianno', cursive", text: 'angel', wing: 'elegant4', sub: '', size: 95, subSize: 0 },
+            { id: 91, cat: 'elegant', font: "'Parisienne', cursive", text: 'Angel', wing: 'elegant5', sub: 'Rosa Elena', size: 85, subSize: 13 },
+            { id: 92, cat: 'elegant', font: "'Marck Script', cursive", text: 'Angel', wing: 'elegant6', sub: '', size: 90, subSize: 0 },
+
+            // Minimal Owl (14)
+            { id: 93, cat: 'minimal', font: "'Cinzel', serif", text: 'ANGEL', wing: 'mini1', sub: '', size: 70, subSize: 0, weight: 400 },
+            { id: 94, cat: 'minimal', font: "'Cormorant Garamond', serif", text: 'angel', wing: 'mini2', sub: '', size: 85, subSize: 0, weight: 300 },
+            { id: 95, cat: 'minimal', font: "'Caveat', cursive", text: 'Angel', wing: 'mini3', sub: '', size: 90, subSize: 0, weight: 400 },
+            { id: 96, cat: 'minimal', font: "'Playfair Display', serif", text: 'Angel', wing: 'mini4', sub: '', size: 75, subSize: 0, weight: 400 },
+            { id: 97, cat: 'minimal', font: "'Dancing Script', cursive", text: 'angel', wing: 'mini5', sub: '', size: 85, subSize: 0, weight: 400 },
+            { id: 98, cat: 'minimal', font: "'Amatic SC', cursive", text: 'ANGEL', wing: 'mini6', sub: '', size: 100, subSize: 0, weight: 700 },
+            { id: 99, cat: 'minimal', font: "'Shadows Into Light', cursive", text: 'Angel', wing: 'mini1', sub: '', size: 75, subSize: 0 },
+            { id: 100, cat: 'minimal', font: "'Kalam', cursive", text: 'angel', wing: 'mini2', sub: '', size: 80, subSize: 0 },
+            { id: 101, cat: 'minimal', font: "'Great Vibes', cursive", text: 'Angel', wing: 'mini3', sub: '', size: 90, subSize: 0 },
+            { id: 102, cat: 'minimal', font: "'Satisfy', cursive", text: 'Angel', wing: 'mini4', sub: '', size: 85, subSize: 0 },
+            { id: 103, cat: 'minimal', font: "'Sacramento', cursive", text: 'angel', wing: 'mini5', sub: '', size: 95, subSize: 0 },
+            { id: 104, cat: 'minimal', font: "'Lobster', cursive", text: 'Angel', wing: 'mini6', sub: '', size: 85, subSize: 0 },
+            { id: 105, cat: 'minimal', font: "'Allura', cursive", text: 'Angel', wing: 'mini1', sub: '', size: 85, subSize: 0 },
+            { id: 106, cat: 'minimal', font: "'Pacifico', cursive", text: 'ANGEL', wing: 'mini2', sub: '', size: 75, subSize: 0 },
+
+            // Bold Owl (14)
+            { id: 107, cat: 'bold', font: "'Cinzel', serif", text: 'ANGEL', wing: 'bold1', sub: 'Rosa Elena', size: 65, subSize: 13, weight: 700 },
+            { id: 108, cat: 'bold', font: "'Cormorant Garamond', serif", text: 'Angel', wing: 'bold2', sub: '', size: 80, subSize: 0, weight: 700 },
+            { id: 109, cat: 'bold', font: "'Playfair Display', serif", text: 'ANGEL', wing: 'bold3', sub: 'R E A', size: 70, subSize: 12, weight: 700 },
+            { id: 110, cat: 'bold', font: "'Lobster', cursive", text: 'Angel', wing: 'bold4', sub: '', size: 85, subSize: 0 },
+            { id: 111, cat: 'bold', font: "'Pacifico', cursive", text: 'angel', wing: 'bold5', sub: 'Rosa Elena Angel', size: 80, subSize: 11 },
+            { id: 112, cat: 'bold', font: "'Amatic SC', cursive", text: 'ANGEL', wing: 'bold6', sub: '', size: 100, subSize: 0, weight: 700 },
+            { id: 113, cat: 'bold', font: "'Permanent Marker', cursive", text: 'ANGEL', wing: 'bold1', sub: 'Rosa Elena', size: 60, subSize: 12 },
+            { id: 114, cat: 'bold', font: "'Caveat', cursive", text: 'Angel', wing: 'bold2', sub: '', size: 90, subSize: 0, weight: 700 },
+            { id: 115, cat: 'bold', font: "'Kalam', cursive", text: 'angel', wing: 'bold3', sub: 'R.E.A', size: 80, subSize: 13, weight: 700 },
+            { id: 116, cat: 'bold', font: "'Dancing Script', cursive", text: 'Angel', wing: 'bold4', sub: '', size: 85, subSize: 0, weight: 700 },
+            { id: 117, cat: 'bold', font: "'Satisfy', cursive", text: 'ANGEL', wing: 'bold5', sub: 'Rosa Elena', size: 80, subSize: 12 },
+            { id: 118, cat: 'bold', font: "'Great Vibes', cursive", text: 'Angel', wing: 'bold6', sub: '', size: 85, subSize: 0 },
+            { id: 119, cat: 'bold', font: "'Tangerine', cursive", text: 'angel', wing: 'bold1', sub: 'Rosa Elena Angel', size: 100, subSize: 11, weight: 700 },
+            { id: 120, cat: 'bold', font: "'Cinzel', serif", text: 'Angel', wing: 'bold2', sub: '', size: 70, subSize: 0, weight: 600 },
+        ];
+
+        let currentDesign = designs[0];
+        let filteredDesigns = [...designs];
+        let textColor = '#1a1a2e';
+        let wingColor = '#1a1a2e';
+        let subColor = '#666666';
+
+        function init() {
+            renderGrid();
+            applyDesign(designs[0]);
+        }
+
+        function renderGrid(category = 'all') {
+            const grid = document.getElementById('styleGrid');
+            filteredDesigns = category === 'all' ? [...designs] : designs.filter(d => d.cat === category);
+
+            grid.innerHTML = filteredDesigns.map(design => {
+                const wing = wings[design.wing];
+                return `
+                    <div class="style-card ${design.id === currentDesign.id ? 'active' : ''}"
+                         onclick="selectDesign(${design.id})" data-id="${design.id}">
+                        <div class="card-preview" style="font-family: ${design.font}; font-weight: ${design.weight || 400};">
+                            <span class="mini-wing" style="transform: scaleX(-1)">${wing.left}</span>
+                            <span>${design.text}</span>
+                            <span class="mini-wing">${wing.right}</span>
+                        </div>
+                        <div class="card-name">${design.cat}</div>
+                    </div>
+                `;
+            }).join('');
+
+            updateInfo();
+        }
+
+        function filterByCategory(category = 'all', btn = null) {
+            if (btn) {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                btn.classList.add('active');
+            }
+            document.getElementById('categorySelect').value = category;
+            renderGrid(category);
+        }
+
+        function selectDesign(id) {
+            const design = designs.find(d => d.id === id);
+            if (design) {
+                currentDesign = design;
+                applyDesign(design);
+                updateActiveCard();
+                updateInfo();
+            }
+        }
+
+        function applyDesign(design) {
+            const wing = wings[design.wing];
+
+            document.getElementById('wingLeft').textContent = wing.left;
+            document.getElementById('wingRight').textContent = wing.right;
+            document.getElementById('wingLeft').style.fontSize = (design.size * 0.9) + 'px';
+            document.getElementById('wingRight').style.fontSize = (design.size * 0.9) + 'px';
+
+            const logoText = document.getElementById('logoText');
+            logoText.textContent = design.text;
+            logoText.style.fontFamily = design.font;
+            logoText.style.fontSize = design.size + 'px';
+            logoText.style.fontWeight = design.weight || 400;
+            logoText.style.color = textColor;
+
+            document.getElementById('wingLeft').style.color = wingColor;
+            document.getElementById('wingRight').style.color = wingColor;
+
+            const logoSub = document.getElementById('logoSub');
+            if (design.sub) {
+                logoSub.style.display = 'block';
+                logoSub.textContent = design.sub;
+                logoSub.style.fontSize = design.subSize + 'px';
+                logoSub.style.color = subColor;
+            } else {
+                logoSub.style.display = 'none';
+            }
+        }
+
+        function updateActiveCard() {
+            document.querySelectorAll('.style-card').forEach(card => {
+                card.classList.toggle('active', parseInt(card.dataset.id) === currentDesign.id);
+            });
+        }
+
+        function updateInfo() {
+            const index = filteredDesigns.findIndex(d => d.id === currentDesign.id) + 1;
+            document.getElementById('variationInfo').textContent =
+                `Diseño ${index || 1} de ${filteredDesigns.length}`;
+        }
+
+        function randomize() {
+            const randomIndex = Math.floor(Math.random() * filteredDesigns.length);
+            const design = filteredDesigns[randomIndex];
+            currentDesign = design;
+            applyDesign(design);
+            updateActiveCard();
+            updateInfo();
+
+            const card = document.querySelector(`.style-card[data-id="${design.id}"]`);
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function setBg(type) {
+            const container = document.getElementById('previewContainer');
+            container.classList.remove('dark-bg', 'transparent-bg');
+            if (type === 'dark') container.classList.add('dark-bg');
+            else if (type === 'transparent') container.classList.add('transparent-bg');
+        }
+
+        function updateColors() {
+            textColor = document.getElementById('textColor').value;
+            wingColor = document.getElementById('wingColor').value;
+            subColor = document.getElementById('subColor').value;
+
+            document.getElementById('logoText').style.color = textColor;
+            document.getElementById('wingLeft').style.color = wingColor;
+            document.getElementById('wingRight').style.color = wingColor;
+            document.getElementById('logoSub').style.color = subColor;
+        }
+
+        function showNotice(text) {
+            const notice = document.getElementById('notice');
+            notice.textContent = text;
+            notice.classList.add('show');
+            setTimeout(() => notice.classList.remove('show'), 2000);
+        }
+
+        function downloadSVG() {
+            const size = parseInt(document.getElementById('sizeSelect').value);
+            const design = currentDesign;
+            const wing = wings[design.wing];
+
+            const fontSize = (design.size / 85) * size * 0.12;
+            const wingSize = fontSize * 0.9;
+            const subFontSize = (design.subSize / 14) * size * 0.025;
+
+            let subSVG = '';
+            if (design.sub) {
+                subSVG = `<text x="50%" y="75%" font-family="'Segoe UI', sans-serif" font-size="${subFontSize}" fill="${subColor}" text-anchor="middle" letter-spacing="5">${escapeXml(design.sub)}</text>`;
+            }
+
+            const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size * 0.5}" viewBox="0 0 ${size} ${size * 0.5}">
+    <text x="25%" y="50%" font-size="${wingSize}" fill="${wingColor}" text-anchor="middle" dominant-baseline="middle" transform="scale(-1,1) translate(-${size * 0.5},0)">${wing.left}</text>
+    <text x="50%" y="50%" font-family="${design.font}" font-size="${fontSize}" font-weight="${design.weight || 400}" fill="${textColor}" text-anchor="middle" dominant-baseline="middle">${escapeXml(design.text)}</text>
+    <text x="75%" y="50%" font-size="${wingSize}" fill="${wingColor}" text-anchor="middle" dominant-baseline="middle">${wing.right}</text>
+    ${subSVG}
+</svg>`;
+
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = 'Angel-logo.svg';
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+            showNotice('SVG Bajado!');
+        }
+
+        function escapeXml(text) {
+            return text.replace(/[<>&'"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c]));
+        }
+
+        function downloadPNG() {
+            const size = parseInt(document.getElementById('sizeSelect').value);
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size * 0.5;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawToCanvas(ctx, size);
+
+            const link = document.createElement('a');
+            link.download = 'Angel-logo.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showNotice('PNG Bajado!');
+        }
+
+        function downloadPNGTransparent() {
+            const size = parseInt(document.getElementById('sizeSelect').value);
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size * 0.5;
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawToCanvas(ctx, size);
+
+            const link = document.createElement('a');
+            link.download = 'Angel-logo-transparent.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showNotice('PNG Transparente Bajado!');
+        }
+
+        function drawToCanvas(ctx, size) {
+            const design = currentDesign;
+            const wing = wings[design.wing];
+            const height = size * 0.5;
+
+            const fontSize = (design.size / 85) * size * 0.11;
+            const wingSize = fontSize * 0.85;
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Left wing (mirrored)
+            ctx.save();
+            ctx.translate(size * 0.2, height * 0.45);
+            ctx.scale(-1, 1);
+            ctx.font = `${wingSize}px serif`;
+            ctx.fillStyle = wingColor;
+            ctx.fillText(wing.left, 0, 0);
+            ctx.restore();
+
+            // Main text
+            ctx.font = `${design.weight || 400} ${fontSize}px ${design.font.replace(/'/g, '')}`;
+            ctx.fillStyle = textColor;
+            ctx.fillText(design.text, size * 0.5, height * 0.45);
+
+            // Right wing
+            ctx.font = `${wingSize}px serif`;
+            ctx.fillStyle = wingColor;
+            ctx.fillText(wing.right, size * 0.8, height * 0.45);
+
+            // Subtext
+            if (design.sub) {
+                const subFontSize = (design.subSize / 14) * size * 0.022;
+                ctx.font = `${subFontSize}px 'Segoe UI', sans-serif`;
+                ctx.fillStyle = subColor;
+                ctx.fillText(design.sub, size * 0.5, height * 0.75);
+            }
+        }
+
+        init();
+
+        // PWA Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').style.display = 'inline-block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(result => {
+                    if (result.outcome === 'accepted') {
+                        alert('App instalada!');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBtn').style.display = 'none';
+                });
+            }
+        }
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed:', err));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ff6b6b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Diseños">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Generador de Diseños Chistosos</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f1a;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        select {
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 2px solid #3a3a5c;
+            border-radius: 25px;
+            background: #1a1a2e;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .generate-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .generate-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .column {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid #3a3a5c;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            border: 1px solid #3a3a5c;
+            border-radius: 15px;
+            background: transparent;
+            color: #a0a0c0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .quote-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            line-height: 1.4;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .category-tag {
+            font-size: 0.85rem;
+            color: #ff6b6b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .image-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #242442;
+            border-radius: 12px;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generated-image {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .generated-image.loaded {
+            display: block;
+        }
+
+        .image-with-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+            text-align: center;
+            text-shadow: 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 0 0 #000, -3px 0 0 #000, 0 3px 0 #000, 0 -3px 0 #000;
+            max-width: 90%;
+            line-height: 1.2;
+            padding: 10px;
+        }
+
+        .placeholder {
+            text-align: center;
+            color: #a0a0c0;
+            padding: 40px;
+        }
+
+        .placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            color: #a0a0c0;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #3a3a5c;
+            border-top-color: #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .copy-notice {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #4ecdc4;
+            color: #0f0f1a;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: transform 0.3s;
+            z-index: 100;
+        }
+
+        .copy-notice.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .download-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #3a3a5c;
+        }
+
+        .download-options .btn {
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .size-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .size-selector label {
+            font-size: 0.85rem;
+            color: #a0a0c0;
+        }
+
+        .size-selector select {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border-radius: 15px;
+        }
+
+        .text-style-toggle {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .text-style-toggle .btn {
+            flex: 1;
+        }
+
+        .text-style-toggle .btn.active {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            border-color: transparent;
+        }
+
+        .cricut-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #2d2d4a;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #4ecdc4;
+            margin-left: 10px;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            color: #a0a0c0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border: 2px solid #3a3a5c;
+            border-radius: 20px;
+            background: transparent;
+            color: #a0a0c0;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            border-color: transparent;
+        }
+
+        .install-btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border: 2px solid #4ecdc4;
+            border-radius: 20px;
+            background: transparent;
+            color: #4ecdc4;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .install-btn:hover {
+            background: #4ecdc4;
+            color: #0f0f1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-bar">
+            <a class="nav-link active" href="index.html">Frases</a>
+            <a class="nav-link" href="logo-angel.html">Logo Angel</a>
+            <a class="nav-link" href="logo-rea.html">Logo REA</a>
+            <button class="install-btn" id="installBtn" onclick="installApp()">Instalar App</button>
+        </nav>
+        <h1>Generador de Diseños Chistosos <span class="cricut-badge">Cricut Ready</span></h1>
+
+        <div class="controls">
+            <select id="categorySelect">
+                <option value="all">Todo / All</option>
+                <option value="mexican">Mexicano</option>
+                <option value="tacos">Tacos y Comida</option>
+                <option value="bebidas">Bebidas y Party</option>
+                <option value="flojera">Flojera Mode</option>
+                <option value="sarcasmo">Sarcasmo</option>
+                <option value="familia">Familia</option>
+                <option value="mood">Mood / Vibes</option>
+                <option value="adulting">Adulting</option>
+                <option value="barrio">Barrio / Calle</option>
+            </select>
+            <button class="generate-btn" id="generateBtn">Generar</button>
+        </div>
+
+        <div class="two-column">
+            <div class="column">
+                <div class="column-header">
+                    <span class="label">Texto</span>
+                    <div class="actions">
+                        <button class="btn" onclick="copyQuote()">Copiar</button>
+                        <button class="btn" onclick="refreshQuote()">Nuevo Texto</button>
+                    </div>
+                </div>
+                <p class="quote-text" id="quoteText">Dale click a "Generar" para empezar!</p>
+                <span class="category-tag" id="quoteCategory"></span>
+
+                <div class="section-title">Estilo de Texto (para corte)</div>
+                <div class="text-style-toggle">
+                    <button class="btn active" id="solidBtn" onclick="setTextStyle('solid')">Sólido</button>
+                    <button class="btn" id="outlineBtn" onclick="setTextStyle('outline')">Contorno</button>
+                </div>
+
+                <div class="download-options">
+                    <button class="btn" onclick="downloadSVG()">Bajar SVG</button>
+                    <button class="btn" onclick="downloadTextPNG()">Texto PNG</button>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="column-header">
+                    <span class="label">Imagen</span>
+                    <div class="actions">
+                        <button class="btn" onclick="regenerateImage()">Nueva Imagen</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <div class="placeholder" id="placeholder">
+                        <div class="placeholder-icon">&#127912;</div>
+                        <p>Tu imagen aparecerá aquí</p>
+                    </div>
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Creando diseño...</p>
+                    </div>
+                    <div class="image-with-text" id="imageWithText" style="display: none;">
+                        <img class="generated-image loaded" id="generatedImage" alt="Generated design">
+                        <div class="text-overlay" id="textOverlay"></div>
+                    </div>
+                </div>
+
+                <div class="size-selector">
+                    <label>Tamaño:</label>
+                    <select id="sizeSelect">
+                        <option value="768">Normal (768px)</option>
+                        <option value="1024">Grande (1024px)</option>
+                        <option value="2048">XL - Playera (2048px)</option>
+                        <option value="3000">Print (3000px)</option>
+                    </select>
+                </div>
+
+                <div class="download-options">
+                    <button class="btn" onclick="downloadImage()">Diseño Completo</button>
+                    <button class="btn" onclick="downloadImageOnly()">Solo Imagen</button>
+                    <button class="btn" onclick="downloadTransparent()">Print Then Cut</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="copy-notice" id="copyNotice">Copiado!</div>
+
+    <script>
+        // Quote objects with matching image prompts - Spanish/Spanglish
+        const quoteData = {
+            mexican: [
+                { text: "100% Mexicano", image: "bandera mexicana con aguila cartoon, colores vibrantes" },
+                { text: "Orgullosamente Latino", image: "corazón con colores de mexico, estilo cartoon" },
+                { text: "Hecho en Mexico", image: "sello de mexico cartoon con nopal y aguila" },
+                { text: "Viva Mexico cabrones!", image: "mariachi feliz tocando trompeta, bigote grande, fiesta" },
+                { text: "Si se puede chingao!", image: "nopal fuerte con musculos, cara determinada, sudando" },
+                { text: "Echale ganas cabrón!", image: "taco con capa de superheroe volando por el barrio" },
+                { text: "Nopal en la frente y qué?", image: "persona cartoon con nopal en la frente, orgulloso, actitud" },
+                { text: "Como Mexico no hay dos", image: "mapa de mexico con sombrero y bigote sonriendo" },
+                { text: "Puro pinche corazón mexicano", image: "corazón con sombrero de charro y bigote, llamas" },
+                { text: "Soy de rancho y que chingados?", image: "vaquero mexicano con botas y sombrero, actitud ruda" },
+                { text: "A darle que es mole de olla", image: "olla de mole humeante con cara feliz" },
+                { text: "No hay pedo compa", image: "chile relajado en hamaca con lentes de sol, barrio" },
+                { text: "Que onda guey!", image: "toro amigable saludando con sombrero en la calle" },
+                { text: "No mames!", image: "taco sorprendido con ojos grandes, boca abierta" },
+                { text: "Esta bien cabrón", image: "chile jalapeño sudando con cara de esfuerzo, fuego" },
+                { text: "Me vale madres", image: "esqueleto mexicano con actitud indiferente, sombrero" },
+                { text: "Orale pues", image: "aguacate cool con lentes oscuros diciendo ok" },
+                { text: "Ay Chihuahua!", image: "chihuahua sorprendido con ojos enormes" },
+                { text: "Fierro pariente!", image: "herradura de caballo con llamas, estilo vaquero" },
+                { text: "No seas pinche codo", image: "codo cartoon con cara tacaña agarrando monedas" },
+                { text: "Ando bien salado", image: "salero triste derramando sal en la banqueta" },
+                { text: "La chancla manda cabrones", image: "chancla voladora con cara enojada de mama, fuego" },
+                { text: "Abuelita's boy y qué?", image: "abuelita mexicana abrazando, delantal y moño" },
+                { text: "Criado a puro caldo y chanclazos", image: "olla de caldo y chancla con corazones" },
+                { text: "Bendiciones de mamá o te chingas", image: "mama mexicana haciendo la señal de la cruz, seria" },
+                { text: "Del barrio pa'l mundo", image: "vecindario mexicano colorido con persona saliendo triunfante" },
+                { text: "Puro barrio vieja!", image: "calle de barrio con grafiti colorido y perro callejero" },
+                { text: "Chingón de nacimiento", image: "bebé con lentes oscuros y cadena de oro, actitud" },
+            ],
+            tacos: [
+                { text: "Tacos antes que vatos", image: "taco con corona de rey, actitud de diva" },
+                { text: "Sin salsa no es comida pendejo", image: "botella de salsa enojada, brazos cruzados, furiosa" },
+                { text: "Team Birria a la verga", image: "taco de birria jugoso con consomé, feliz, champions" },
+                { text: "Team Carnitas no mames", image: "carnitas doradas en taco, cara satisfecha, medalla" },
+                { text: "Team Asada cabrones", image: "carne asada en taco con fuego, cara ruda, llamas" },
+                { text: "Team Pastor y no me discutas", image: "taco al pastor con piña bailando, corona" },
+                { text: "Puro pinche taco life", image: "taco con lentes de sol y cadena de oro, barrio" },
+                { text: "Taquero de corazón", image: "corazón hecho de tacos, brillando" },
+                { text: "El chile no pica, hace cariño cabrón", image: "chile abrazando a alguien con lágrimas de felicidad" },
+                { text: "Tortilla gang del barrio", image: "grupo de tortillas con actitud de pandilla, calle, grafiti" },
+                { text: "Powered by tacos y chingaderas", image: "robot funcionando con tacos como batería, humo" },
+                { text: "Mas chile por favor chingao", image: "chile jalapeño pidiendo más con cartel enojado" },
+                { text: "Dame mi pinche taco", image: "manos extendidas hacia taco brillante como tesoro" },
+                { text: "Salsa es mi tipo de sangre", image: "bolsa de sangre con salsa roja, hospital cartoon" },
+                { text: "Sin queso me vale verga la vida", image: "queso derretido con cara dramática de novela" },
+                { text: "El que no traga tacos no es de fiar", image: "detective taco investigando con lupa, sospechoso" },
+            ],
+            bebidas: [
+                { text: "Pero first, mi pinche cafecito", image: "taza de café mexicano con olla de barro, humo" },
+                { text: "Sin café no me hablen cabrones", image: "zombie caminando hacia taza de café gigante, barrio" },
+                { text: "El tequila habla por mi y dice pendejadas", image: "botella de tequila con boca hablando burbujas" },
+                { text: "Michelada mode activado", image: "michelada con lentes de sol, en la banqueta" },
+                { text: "Caguama power cabrones!", image: "caguama con capa de superheroe musculoso, barrio" },
+                { text: "Una chela y ya... bueno dos", image: "cerveza guiñando el ojo, dos botellas" },
+                { text: "Es viernes y el cuerpo lo sabe!", image: "esqueleto bailando con cerveza en mano" },
+                { text: "Hora de pistear perros!", image: "reloj marcando hora de fiesta con cervezas volando" },
+                { text: "Salud cabrones!", image: "tarros de cerveza chocando, espuma volando, fiesta" },
+                { text: "El mezcal me hizo hacer pendejadas", image: "gusano de mezcal con cara traviesa y diablito" },
+                { text: "Crudo pero aquí andamos verga", image: "esqueleto con lentes oscuros y café, barrio" },
+                { text: "La cruda no me tumba cabrón", image: "luchador parado firme contra ola de cruda" },
+                { text: "El tequila me hizo hacerlo", image: "botella de tequila con cuernitos de diablo, risa" },
+                { text: "Arriba, abajo, al centro, pa dentro!", image: "shot de tequila haciendo el recorrido, fiesta" },
+                { text: "Peda responsable... más o menos", image: "persona mareada con aureola y cuernos" },
+                { text: "Yo no tomo... bueno ya que", image: "persona rechazando copa y luego agarrándola" },
+            ],
+            flojera: [
+                { text: "Modo siesta activado, no chinguen", image: "perezoso durmiendo en hamaca mexicana, barrio" },
+                { text: "Que hueva tan cabrona", image: "huevo acostado sin ganas de nada, cobijas" },
+                { text: "Ahorita no joven, estoy en mi desmadre", image: "persona en hamaca rechazando con dedo medio" },
+                { text: "En 5 minutos... o mañana", image: "reloj derretido, nunca llega, telarañas" },
+                { text: "Ya mero mi culo", image: "tortuga lenta caminando hacia meta lejana, sudando" },
+                { text: "Netflix y no me chinguen", image: "persona envuelta en cobija frente a TV, oscuro" },
+                { text: "Mi cama me llama y yo obedezco", image: "cama con brazos llamando a persona, corazones" },
+                { text: "Profesional en hacer ni madres", image: "diploma de flojera con medalla de oro" },
+                { text: "Mañana empiezo... o pasado", image: "calendario con todos los días tachados" },
+                { text: "Viviendo mi mejor vida de huevón", image: "gato gordo feliz acostado panza arriba, corona" },
+                { text: "No molestar, ando en mi pedo", image: "letrero de no molestar con calavera" },
+                { text: "Alérgico a madrugar, me vale", image: "despertador siendo destruido por almohada" },
+                { text: "Guerrero del fin de semana", image: "guerrero dormido con almohada como escudo, ronquidos" },
+                { text: "Yo no soy flojo, ahorro energía", image: "batería casi vacía acostada feliz" },
+            ],
+            sarcasmo: [
+                { text: "No soy mandona, soy la mera mera", image: "reina con corona señalando ordenes, trono" },
+                { text: "Hablo fluido en sarcasmo y groserías", image: "cerebro hablando burbujas con signos de grosería" },
+                { text: "Zero chill y me vale madres", image: "termómetro en cero con cara de enojo, fuego" },
+                { text: "No es mi circo ni mis changos", image: "chango haciendo desmadre, persona ignorando con café" },
+                { text: "Per my last mensaje, pendejo", image: "email con cara pasivo agresiva, fuego" },
+                { text: "Sorry not sorry, me vale", image: "cara con sonrisa falsa levantando dedo medio" },
+                { text: "Karma viene y trae chancla", image: "karma manejando carro hacia alguien con chancla" },
+                { text: "Que Diosito te bendiga... y te aguante", image: "angelito con actitud sarcástica y brazos cruzados" },
+                { text: "No me hablen que ando cabrona", image: "persona con llamas saliendo de la cabeza, barrio" },
+                { text: "Zona libre de pendejadas", image: "letrero de zona prohibida con payaso tachado" },
+                { text: "Muy bendecida pa' andar estresada", image: "mujer relajada mientras otros corren, aureola" },
+                { text: "Plot twist: me vale verga", image: "libro con giro de trama y cara indiferente" },
+                { text: "Cancelé mi suscripción a tu drama", image: "control remoto apagando televisión de novela" },
+                { text: "Vine, vi, y me fui a la chingada", image: "persona saliendo rápido por la puerta, humo" },
+                { text: "Mi cara de que me importa", image: "cara completamente indiferente con lentes oscuros" },
+                { text: "No estoy de malas, así es mi cara", image: "cara seria con ceja levantada, actitud" },
+            ],
+            familia: [
+                { text: "Chismecito con las tías, puro desmadre", image: "grupo de tías chismeando con café, escándalo" },
+                { text: "Prima gang del barrio", image: "grupo de primas tomando selfie, barrio, fiesta" },
+                { text: "La favorita de abuelita y me vale", image: "nieta con corona al lado de abuelita, trofeo" },
+                { text: "Tío pedo en cada fiesta", image: "tío con cerveza contando historias, risa, barrio" },
+                { text: "Familia primero siempre cabrones", image: "familia grande abrazándose, corazones, barrio" },
+                { text: "Sobrina chiquita pero cabrona", image: "sobrina con actitud de reina pidiendo dinero" },
+                { text: "Mamá siempre tiene la razón... siempre", image: "mama con chancla en mano, dedo señalando" },
+                { text: "La princesa de papi... la cabrona del barrio", image: "niña con corona y actitud de barrio" },
+                { text: "Hermanita problema del barrio", image: "hermana menor haciendo desmadre, risa" },
+                { text: "Hermano protector, te parto la madre", image: "hermano mayor con brazos cruzados, enorme, serio" },
+                { text: "Criada con chancla, caldo y putazos de amor", image: "chancla y olla de caldo y corazón juntos" },
+                { text: "Mi familia es un desmadre pero es mía", image: "familia loca pero feliz junta, fiesta, barrio" },
+                { text: "Las tías saben todo antes que Google", image: "grupo de tías con antenas de chisme, teléfonos" },
+                { text: "El primo que siempre la caga", image: "primo haciendo desastre en fiesta familiar" },
+            ],
+            mood: [
+                { text: "Estoy en mi mero mole, no chinguen", image: "persona feliz bañándose en mole, relajada" },
+                { text: "Ando sintiéndome bien chingona", image: "mujer viéndose al espejo con confianza, barrio" },
+                { text: "Malas vibras prohibidas cabrones", image: "letrero de prohibido malas vibras, calavera" },
+                { text: "Hoy me siento bien chingona", image: "mujer con corona y actitud de reina, fuego" },
+                { text: "Día culero pero aquí andamos", image: "nube gris siguiendo a persona sonriendo, barrio" },
+                { text: "Protagonista de mi propia novela", image: "persona con spotlight de telenovela, drama" },
+                { text: "Sobreviviendo el pinche lunes", image: "esqueleto arrastrándose hacia el viernes" },
+                { text: "Viernes cabrones!", image: "esqueleto bailando saliendo del trabajo, fiesta" },
+                { text: "Mood: no me hablen o los mando alv", image: "burbuja protectora con espinas alrededor de persona" },
+                { text: "Ando en las nubes y me vale", image: "persona flotando feliz en nubes, paz" },
+                { text: "Bendecida, vestida y cabrona", image: "mujer arreglada con aureola y tacones, actitud" },
+                { text: "Soy un desmadre pero con estilo", image: "tornado con tacones y lentes de sol, glamour" },
+                { text: "Hoy no es mi día y me vale madre", image: "persona en llamas tomando café tranquila" },
+                { text: "Ando de malas, no me prueben", image: "volcán a punto de explotar con cara seria" },
+            ],
+            adulting: [
+                { text: "Ser adulto está bien cabrón", image: "adulto confundido con bills volando, barrio" },
+                { text: "No sé que verga hago pero aquí estoy", image: "persona perdida con mapa al revés, confundida" },
+                { text: "Fingiendo que no estoy en la ruina", image: "persona con máscara de profesional, bolsillos vacíos" },
+                { text: "Las bills no se pagan solas cabrón", image: "bills con pies persiguiendo a persona corriendo" },
+                { text: "De quincena a quincena sobreviviendo", image: "persona corriendo entre dos fechas de pago, sudando" },
+                { text: "Mi planta está viva... de milagro", image: "planta medio muerta con gotero y veladora" },
+                { text: "Profesional en fingir que todo está bien", image: "payaso con corbata y maletín, barrio" },
+                { text: "Sobreviviendo con café y puras chingaderas", image: "café y calavera como combustible, humo" },
+                { text: "Por qué todo está tan pinche caro?", image: "billetera llorando viendo precios, tienda, barrio" },
+                { text: "Esta junta pudo ser un pinche email", image: "junta con personas dormidas, reloj, desesperación" },
+                { text: "Caos funcional es mi estilo", image: "tornado organizado con lista de tareas, barrio" },
+                { text: "Adulto responsable... a veces", image: "adulto con gorra de fiesta pagando bills, confundido" },
+                { text: "El dinero va y viene... nomás se va", image: "billetes con alas volando lejos de persona triste" },
+                { text: "Trabajando para el fin de semana", image: "persona en escritorio mirando calendario de viernes" },
+            ],
+            barrio: [
+                { text: "Del barrio y con orgullo cabrón", image: "vecindario colorido con persona orgullosa, grafiti" },
+                { text: "Calle pero con clase", image: "esqueleto elegante con cadena de oro, barrio, grafiti" },
+                { text: "No me busques porque me encuentras", image: "luchador mexicano cruzado de brazos, serio" },
+                { text: "Cara de buena gente, alma de desmadre", image: "angelito con cuernos escondidos, sonrisa traviesa" },
+                { text: "El barrio me hizo cabrón", image: "calle de barrio con grafiti y persona fuerte" },
+                { text: "Derecho y chueco pero nunca de rodillas", image: "nopal parado firme en el desierto, sol fuerte" },
+                { text: "No me conoces y ya me debes", image: "persona con libreta de deudas, actitud seria" },
+                { text: "Tranquilo pero no pendejo", image: "gato callejero relajado pero con garras afuera" },
+                { text: "Si la vida te da limones, pide sal y tequila", image: "limones con shot de tequila, fiesta callejera" },
+                { text: "Ni de aquí ni de allá pero bien chingón", image: "persona parada entre dos mundos, confiada" },
+                { text: "Calladito me veo más cabrón", image: "persona callada con aura de poder, sombra grande" },
+                { text: "El que nada debe, nada teme... yo sí debo", image: "persona corriendo de bills con cara de risa" },
+                { text: "Primero muerto que sencillo", image: "esqueleto con traje elegante y sombrero, estilo" },
+                { text: "Pobre pero con estilo cabrón", image: "persona con ropa remendada pero actitud de millonario" },
+                { text: "De la cuna al barrio, del barrio al cielo", image: "escalera del barrio hacia las nubes, grafiti" },
+                { text: "Chingón por naturaleza", image: "león con sombrero mexicano rugiendo, fuego" },
+            ]
+        };
+
+        // Flatten for backward compatibility
+        function getAllQuotes() {
+            const all = [];
+            for (const category in quoteData) {
+                quoteData[category].forEach(item => {
+                    all.push({ ...item, category });
+                });
+            }
+            return all;
+        }
+
+        let currentQuote = '';
+        let currentCategory = '';
+        let currentImagePrompt = '';
+        let currentLoadedImage = null;
+        let textStyle = 'solid'; // 'solid' or 'outline'
+        let currentQuoteData = null;
+
+        function getRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function getQuotesByCategory(category) {
+            if (category === 'all') return getAllQuotes();
+            return quoteData[category] ? quoteData[category].map(item => ({ ...item, category })) : getAllQuotes();
+        }
+
+        function generateQuote() {
+            const category = document.getElementById('categorySelect').value;
+            const quoteList = getQuotesByCategory(category);
+            currentQuoteData = getRandom(quoteList);
+            currentQuote = currentQuoteData.text;
+            currentImagePrompt = currentQuoteData.image;
+            currentCategory = currentQuoteData.category || category;
+
+            document.getElementById('quoteText').textContent = `"${currentQuote}"`;
+            document.getElementById('quoteCategory').textContent = currentCategory.toUpperCase();
+        }
+
+        function refreshQuote() {
+            generateQuote();
+        }
+
+        function generateImage() {
+            const placeholder = document.getElementById('placeholder');
+            const loading = document.getElementById('loading');
+            const img = document.getElementById('generatedImage');
+            const imageWithText = document.getElementById('imageWithText');
+            const textOverlay = document.getElementById('textOverlay');
+
+            if (!currentQuote || !currentImagePrompt) {
+                generateQuote();
+            }
+
+            // Build prompt using the matching image description
+            // Safety: explicitly avoid copyrighted content, enforce original art
+            const prompt = `${currentImagePrompt}, original unique character design, barrio street art style, hood comedy cartoon, Mexican loteria art inspired, hand-drawn look, funny exaggerated expressions, chunky bold lines, colorful graffiti palette, vibrant colors, centered composition, solid color background, NO TEXT, no words, no letters, illustration only, t-shirt graphic design, do NOT include any copyrighted characters, no brand logos, no trademarked imagery, 100% original artwork`;
+
+            // Show loading
+            placeholder.style.display = 'none';
+            imageWithText.style.display = 'none';
+            loading.classList.add('active');
+
+            // Try Pollinations API first, fallback to Puter.js
+            const seed = Math.floor(Math.random() * 999999);
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&seed=${seed}&nologo=true&model=flux`;
+
+            const tempImg = new Image();
+            const timeout = setTimeout(() => {
+                console.log('Pollinations timeout, trying Puter.js...');
+                tempImg.onload = null;
+                tempImg.onerror = null;
+                tryPuterFallback(prompt, img, textOverlay, imageWithText, loading, placeholder);
+            }, 30000);
+
+            tempImg.onload = function() {
+                clearTimeout(timeout);
+                currentLoadedImage = tempImg;
+                img.src = imageUrl;
+                textOverlay.textContent = currentQuote;
+                imageWithText.style.display = 'inline-block';
+                loading.classList.remove('active');
+            };
+
+            tempImg.onerror = function() {
+                clearTimeout(timeout);
+                console.log('Pollinations failed, trying Puter.js...');
+                tryPuterFallback(prompt, img, textOverlay, imageWithText, loading, placeholder);
+            };
+
+            tempImg.src = imageUrl;
+        }
+
+        function tryPuterFallback(prompt, img, textOverlay, imageWithText, loading, placeholder) {
+            if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2img) {
+                puter.ai.txt2img(prompt)
+                    .then(imageElement => {
+                        currentLoadedImage = imageElement;
+                        img.src = imageElement.src;
+                        textOverlay.textContent = currentQuote;
+                        imageWithText.style.display = 'inline-block';
+                        loading.classList.remove('active');
+                    })
+                    .catch(error => {
+                        console.error('Puter.js also failed:', error);
+                        loading.classList.remove('active');
+                        placeholder.style.display = 'block';
+                        placeholder.innerHTML = '<div class="placeholder-icon">&#9888;</div><p>Error generando imagen. Intenta de nuevo.</p>';
+                    });
+            } else {
+                loading.classList.remove('active');
+                placeholder.style.display = 'block';
+                placeholder.innerHTML = '<div class="placeholder-icon">&#9888;</div><p>Error generando imagen. Intenta de nuevo.</p>';
+            }
+        }
+
+        function regenerateImage() {
+            generateImage();
+        }
+
+        function copyQuote() {
+            navigator.clipboard.writeText(currentQuote);
+            showNotice('Copiado!');
+        }
+
+        function showNotice(text) {
+            const notice = document.getElementById('copyNotice');
+            notice.textContent = text;
+            notice.classList.add('show');
+            setTimeout(() => notice.classList.remove('show'), 2000);
+        }
+
+        function generateAll() {
+            generateQuote();
+            setTimeout(() => generateImage(), 100);
+        }
+
+        // Text style toggle
+        function setTextStyle(style) {
+            textStyle = style;
+            document.getElementById('solidBtn').classList.toggle('active', style === 'solid');
+            document.getElementById('outlineBtn').classList.toggle('active', style === 'outline');
+        }
+
+        // Get selected size
+        function getSelectedSize() {
+            return parseInt(document.getElementById('sizeSelect').value);
+        }
+
+        // Download SVG (for Cricut vinyl cutting)
+        function downloadSVG() {
+            if (!currentQuote) {
+                showNotice('Genera una frase primero!');
+                return;
+            }
+
+            const size = getSelectedSize();
+            const fontSize = size * 0.08;
+
+            let textElement;
+            if (textStyle === 'outline') {
+                textElement = `<text x="50%" y="50%"
+                    font-family="Impact, Arial Black, sans-serif"
+                    font-size="${fontSize}"
+                    font-weight="bold"
+                    fill="none"
+                    stroke="black"
+                    stroke-width="3"
+                    text-anchor="middle"
+                    dominant-baseline="middle">${escapeHtml(currentQuote)}</text>`;
+            } else {
+                textElement = `<text x="50%" y="50%"
+                    font-family="Impact, Arial Black, sans-serif"
+                    font-size="${fontSize}"
+                    font-weight="bold"
+                    fill="black"
+                    text-anchor="middle"
+                    dominant-baseline="middle">${escapeHtml(currentQuote)}</text>`;
+            }
+
+            const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    ${textElement}
+</svg>`;
+
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = 'cricut-text.svg';
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+            showNotice('SVG Bajado!');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Download text as PNG with transparent background
+        function downloadTextPNG() {
+            if (!currentQuote) {
+                showNotice('Genera una frase primero!');
+                return;
+            }
+
+            const size = getSelectedSize();
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Transparent background (no fill)
+            ctx.clearRect(0, 0, size, size);
+
+            // Calculate font size based on canvas size
+            const fontSize = size * 0.08;
+            ctx.font = `bold ${fontSize}px Impact, Arial Black, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Word wrap for long quotes
+            const words = currentQuote.split(' ');
+            const lines = [];
+            let currentLine = '';
+            const maxWidth = size * 0.85;
+
+            for (const word of words) {
+                const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            lines.push(currentLine);
+
+            // Draw text
+            const lineHeight = fontSize * 1.2;
+            const startY = (size - (lines.length - 1) * lineHeight) / 2;
+
+            lines.forEach((line, i) => {
+                const y = startY + i * lineHeight;
+                if (textStyle === 'outline') {
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = size * 0.006;
+                    ctx.strokeText(line, size / 2, y);
+                } else {
+                    // Outline for visibility
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = size * 0.012;
+                    ctx.strokeText(line, size / 2, y);
+                    // Fill
+                    ctx.fillStyle = 'black';
+                    ctx.fillText(line, size / 2, y);
+                }
+            });
+
+            const link = document.createElement('a');
+            link.download = 'cricut-text.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showNotice('Texto PNG Bajado!');
+        }
+
+        // Helper function to get image for canvas operations
+        function loadImageForCanvas() {
+            return new Promise((resolve, reject) => {
+                if (!currentLoadedImage) {
+                    reject(new Error('No image loaded'));
+                    return;
+                }
+                // If the image is already loaded (from Puter.js blob/data URL), use directly
+                if (currentLoadedImage.complete && currentLoadedImage.naturalWidth > 0) {
+                    resolve(currentLoadedImage);
+                    return;
+                }
+                // For Pollinations URLs, reload with crossOrigin for canvas
+                const canvasImg = new Image();
+                canvasImg.crossOrigin = 'anonymous';
+                canvasImg.onload = () => resolve(canvasImg);
+                canvasImg.onerror = () => resolve(currentLoadedImage); // try anyway
+                canvasImg.src = currentLoadedImage.src + (currentLoadedImage.src.includes('?') ? '&' : '?') + 't=' + Date.now();
+            });
+        }
+
+        // Download image only (no text)
+        async function downloadImageOnly() {
+            if (!currentLoadedImage) {
+                showNotice('Genera una imagen primero!');
+                return;
+            }
+
+            showNotice('Preparando descarga...');
+
+            try {
+                const size = getSelectedSize();
+                const img = await loadImageForCanvas();
+
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                ctx.drawImage(img, 0, 0, size, size);
+
+                const link = document.createElement('a');
+                link.download = 'design-image-only.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showNotice('Imagen Bajada!');
+            } catch (error) {
+                console.error('Download error:', error);
+                showNotice('Error - intenta generar nueva imagen');
+            }
+        }
+
+        // Download for Print Then Cut (high quality with text)
+        async function downloadTransparent() {
+            if (!currentLoadedImage || !currentQuote) {
+                showNotice('Genera un diseño primero!');
+                return;
+            }
+
+            showNotice('Preparando Print Then Cut...');
+
+            try {
+                const size = getSelectedSize();
+                const img = await loadImageForCanvas();
+
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                // Draw image
+                ctx.drawImage(img, 0, 0, size, size);
+
+                // Draw text with word wrap
+                const fontSize = size * 0.08;
+                ctx.font = `bold ${fontSize}px Impact, Arial Black, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                const words = currentQuote.split(' ');
+                const lines = [];
+                let currentLine = '';
+                const maxWidth = size * 0.85;
+
+                for (const word of words) {
+                    const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxWidth && currentLine) {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                lines.push(currentLine);
+
+                const lineHeight = fontSize * 1.2;
+                const startY = (size - (lines.length - 1) * lineHeight) / 2;
+
+                lines.forEach((line, i) => {
+                    const y = startY + i * lineHeight;
+                    // Black outline
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = size * 0.012;
+                    ctx.strokeText(line, size / 2, y);
+                    // White fill
+                    ctx.fillStyle = 'white';
+                    ctx.fillText(line, size / 2, y);
+                });
+
+                const link = document.createElement('a');
+                link.download = 'print-then-cut.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showNotice('Print Then Cut Listo!');
+            } catch (error) {
+                console.error('Download error:', error);
+                showNotice('Error - intenta generar nueva imagen');
+            }
+        }
+
+        // Download full design (image + text) - Diseño Completo
+        async function downloadImage() {
+            if (!currentLoadedImage || !currentQuote) {
+                showNotice('Genera un diseño primero!');
+                return;
+            }
+
+            showNotice('Preparando diseño...');
+
+            try {
+                const size = getSelectedSize();
+                const img = await loadImageForCanvas();
+
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                ctx.drawImage(img, 0, 0, size, size);
+
+                const fontSize = size * 0.078;
+                ctx.font = `bold ${fontSize}px Impact, Arial Black, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // Word wrap
+                const words = currentQuote.split(' ');
+                const lines = [];
+                let currentLine = '';
+                const maxWidth = size * 0.85;
+
+                for (const word of words) {
+                    const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxWidth && currentLine) {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                lines.push(currentLine);
+
+                const lineHeight = fontSize * 1.2;
+                const startY = (size - (lines.length - 1) * lineHeight) / 2;
+
+                lines.forEach((line, i) => {
+                    const y = startY + i * lineHeight;
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = size * 0.01;
+                    ctx.strokeText(line, size / 2, y);
+                    ctx.fillStyle = 'white';
+                    ctx.fillText(line, size / 2, y);
+                });
+
+                const link = document.createElement('a');
+                link.download = 'design.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showNotice('Bajado!');
+            } catch (error) {
+                console.error('Download error:', error);
+                showNotice('Error - intenta generar nueva imagen');
+            }
+        }
+
+        document.getElementById('generateBtn').addEventListener('click', generateAll);
+
+        // PWA Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').style.display = 'inline-block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(result => {
+                    if (result.outcome === 'accepted') {
+                        showNotice('App instalada!');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBtn').style.display = 'none';
+                });
+            }
+        }
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed:', err));
+        }
+    </script>
+</body>
+</html>
