@@ -383,7 +383,7 @@
             <button class="nav-link" onclick="setupToken()">Cambiar Token</button>
             <button class="install-btn" id="installBtn" onclick="installApp()">Instalar App</button>
         </nav>
-        <h1>Generador de Diseños Chistosos <span class="cricut-badge">Cricut Ready</span></h1>
+        <h1>Generador de Diseños Chistosos <span class="cricut-badge">Print Ready</span></h1>
 
         <div class="controls">
             <select id="categorySelect">
@@ -543,7 +543,7 @@
                 { text: "Ahorita no joven, estoy en mi desmadre", image: "persona en hamaca rechazando con dedo medio" },
                 { text: "En 5 minutos... o mañana", image: "reloj derretido, nunca llega, telarañas" },
                 { text: "Ya mero mi culo", image: "tortuga lenta caminando hacia meta lejana, sudando" },
-                { text: "Netflix y no me chinguen", image: "persona envuelta en cobija frente a TV, oscuro" },
+                { text: "Tele y no me chinguen", image: "persona envuelta en cobija frente a TV, oscuro" },
                 { text: "Mi cama me llama y yo obedezco", image: "cama con brazos llamando a persona, corazones" },
                 { text: "Profesional en hacer ni madres", image: "diploma de flojera con medalla de oro" },
                 { text: "Mañana empiezo... o pasado", image: "calendario con todos los días tachados" },
@@ -584,7 +584,7 @@
                 { text: "Hermano protector, te parto la madre", image: "hermano mayor con brazos cruzados, enorme, serio" },
                 { text: "Criada con chancla, caldo y putazos de amor", image: "chancla y olla de caldo y corazón juntos" },
                 { text: "Mi familia es un desmadre pero es mía", image: "familia loca pero feliz junta, fiesta, barrio" },
-                { text: "Las tías saben todo antes que Google", image: "grupo de tías con antenas de chisme, teléfonos" },
+                { text: "Las tías saben todo antes que nadie", image: "grupo de tías con antenas de chisme, teléfonos" },
                 { text: "El primo que siempre la caga", image: "primo haciendo desastre en fiesta familiar" },
             ],
             mood: [
@@ -812,7 +812,7 @@
             return parseInt(document.getElementById('sizeSelect').value);
         }
 
-        // Download SVG (for Cricut vinyl cutting)
+        // Download SVG (for vinyl cutting)
         function downloadSVG() {
             if (!currentQuote) {
                 showNotice('Genera una frase primero!');
@@ -851,7 +851,7 @@
             const blob = new Blob([svg], { type: 'image/svg+xml' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            link.download = 'cricut-text.svg';
+            link.download = 'cut-text.svg';
             link.href = url;
             link.click();
             URL.revokeObjectURL(url);
@@ -926,7 +926,7 @@
             });
 
             const link = document.createElement('a');
-            link.download = 'cricut-text.png';
+            link.download = 'cut-text.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
             showNotice('Texto PNG Bajado!');
