@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.disenos.chistosos",
+    "sha256_cert_fingerprints": [
+      "CA:17:EA:4F:46:17:29:E9:3B:BA:F5:49:B7:0A:97:42:AD:41:B0:4F:6E:14:C3:2F:60:BC:23:B4:47:1A:6A:D9"
+    ]
+  }
+}]
