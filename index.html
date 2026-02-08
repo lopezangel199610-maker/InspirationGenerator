@@ -720,10 +720,17 @@
                 body: JSON.stringify({ inputs: prompt })
             })
             .then(response => {
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP ${response.status}: ${text.substring(0, 200)}`);
+                    });
+                }
                 return response.blob();
             })
             .then(blob => {
+                if (blob.size < 1000) {
+                    throw new Error('Image too small, probably an error response');
+                }
                 const blobUrl = URL.createObjectURL(blob);
                 const tempImg = new Image();
                 tempImg.onload = function() {
@@ -733,13 +740,18 @@
                     imageWithText.style.display = 'inline-block';
                     loading.classList.remove('active');
                 };
+                tempImg.onerror = function() {
+                    loading.classList.remove('active');
+                    placeholder.style.display = 'block';
+                    placeholder.innerHTML = '<div class="placeholder-icon">&#9888;</div><p>Error cargando imagen.</p>';
+                };
                 tempImg.src = blobUrl;
             })
             .catch(error => {
                 console.error('Image generation error:', error);
                 loading.classList.remove('active');
                 placeholder.style.display = 'block';
-                placeholder.innerHTML = '<div class="placeholder-icon">&#9888;</div><p>Error generando imagen. Intenta de nuevo.</p>';
+                placeholder.innerHTML = '<div class="placeholder-icon">&#9888;</div><p>Error: ' + error.message.substring(0, 100) + '</p>';
             });
         }
 
