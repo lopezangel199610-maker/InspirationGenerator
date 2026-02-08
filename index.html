@@ -695,7 +695,7 @@
 
             // Build prompt using the matching image description
             // Safety: explicitly avoid copyrighted content, enforce original art
-            const prompt = `${currentImagePrompt}, original unique character design, barrio street art style, hood comedy cartoon, Mexican loteria art inspired, hand-drawn look, funny exaggerated expressions, chunky bold lines, colorful graffiti palette, vibrant colors, centered composition, solid color background, NO TEXT, no words, no letters, illustration only, t-shirt graphic design, do NOT include any copyrighted characters, no brand logos, no trademarked imagery, 100% original artwork`;
+            const prompt = `A cartoon illustration about the phrase "${currentQuote}": ${currentImagePrompt}. The image must clearly represent the meaning of the phrase. Cartoon style, funny, vibrant colors, bold lines, centered, solid color background, NO TEXT, no words, no letters, illustration only, original artwork, no copyrighted characters, no brand logos`;
 
             // Show loading
             placeholder.style.display = 'none';
