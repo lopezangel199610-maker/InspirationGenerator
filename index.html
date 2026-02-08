@@ -10,7 +10,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <title>Generador de Diseños Chistosos</title>
-    <script src="https://js.puter.com/v2/"></script>
     <style>
         * {
             margin: 0;
@@ -702,57 +701,69 @@
             imageWithText.style.display = 'none';
             loading.classList.add('active');
 
-            // Try Pollinations API first, fallback to Puter.js
-            const seed = Math.floor(Math.random() * 999999);
-            const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&seed=${seed}&nologo=true&model=flux`;
-
-            const tempImg = new Image();
-            const timeout = setTimeout(() => {
-                console.log('Pollinations timeout, trying Puter.js...');
-                tempImg.onload = null;
-                tempImg.onerror = null;
-                tryPuterFallback(prompt, img, textOverlay, imageWithText, loading, placeholder);
-            }, 30000);
-
-            tempImg.onload = function() {
-                clearTimeout(timeout);
-                currentLoadedImage = tempImg;
-                img.src = imageUrl;
-                textOverlay.textContent = currentQuote;
-                imageWithText.style.display = 'inline-block';
+            // Use Hugging Face FLUX.1-schnell (free tier)
+            const HF_TOKEN = getHFToken();
+            if (!HF_TOKEN) {
                 loading.classList.remove('active');
-            };
+                placeholder.style.display = 'block';
+                placeholder.innerHTML = '<div class="placeholder-icon">&#128273;</div><p>Necesitas un token de Hugging Face.<br>Es gratis!</p>';
+                return;
+            }
+            const HF_URL = 'https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell';
 
-            tempImg.onerror = function() {
-                clearTimeout(timeout);
-                console.log('Pollinations failed, trying Puter.js...');
-                tryPuterFallback(prompt, img, textOverlay, imageWithText, loading, placeholder);
-            };
-
-            tempImg.src = imageUrl;
-        }
-
-        function tryPuterFallback(prompt, img, textOverlay, imageWithText, loading, placeholder) {
-            if (typeof puter !== 'undefined' && puter.ai && puter.ai.txt2img) {
-                puter.ai.txt2img(prompt)
-                    .then(imageElement => {
-                        currentLoadedImage = imageElement;
-                        img.src = imageElement.src;
-                        textOverlay.textContent = currentQuote;
-                        imageWithText.style.display = 'inline-block';
-                        loading.classList.remove('active');
-                    })
-                    .catch(error => {
-                        console.error('Puter.js also failed:', error);
-                        loading.classList.remove('active');
-                        placeholder.style.display = 'block';
-                        placeholder.innerHTML = '<div class="placeholder-icon">&#9888;</div><p>Error generando imagen. Intenta de nuevo.</p>';
-                    });
-            } else {
+            fetch(HF_URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${HF_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ inputs: prompt })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.blob();
+            })
+            .then(blob => {
+                const blobUrl = URL.createObjectURL(blob);
+                const tempImg = new Image();
+                tempImg.onload = function() {
+                    currentLoadedImage = tempImg;
+                    img.src = blobUrl;
+                    textOverlay.textContent = currentQuote;
+                    imageWithText.style.display = 'inline-block';
+                    loading.classList.remove('active');
+                };
+                tempImg.src = blobUrl;
+            })
+            .catch(error => {
+                console.error('Image generation error:', error);
                 loading.classList.remove('active');
                 placeholder.style.display = 'block';
                 placeholder.innerHTML = '<div class="placeholder-icon">&#9888;</div><p>Error generando imagen. Intenta de nuevo.</p>';
+            });
+        }
+
+        // Token management - stored in browser, never in code
+        function getHFToken() {
+            return localStorage.getItem('hf_token');
+        }
+
+        function setupToken() {
+            const token = prompt('Pega tu token de Hugging Face aquí:\n\n(Gratis en huggingface.co/settings/tokens)');
+            if (token && token.startsWith('hf_')) {
+                localStorage.setItem('hf_token', token);
+                showNotice('Token guardado!');
+                return true;
+            } else if (token) {
+                alert('Token inválido. Debe empezar con "hf_"');
+                return false;
             }
+            return false;
+        }
+
+        // Auto-prompt for token on first visit
+        if (!getHFToken()) {
+            setupToken();
         }
 
         function regenerateImage() {
@@ -915,17 +926,12 @@
                     reject(new Error('No image loaded'));
                     return;
                 }
-                // If the image is already loaded (from Puter.js blob/data URL), use directly
+                // Blob URLs don't have CORS issues, resolve directly
                 if (currentLoadedImage.complete && currentLoadedImage.naturalWidth > 0) {
                     resolve(currentLoadedImage);
-                    return;
+                } else {
+                    reject(new Error('Image not loaded'));
                 }
-                // For Pollinations URLs, reload with crossOrigin for canvas
-                const canvasImg = new Image();
-                canvasImg.crossOrigin = 'anonymous';
-                canvasImg.onload = () => resolve(canvasImg);
-                canvasImg.onerror = () => resolve(currentLoadedImage); // try anyway
-                canvasImg.src = currentLoadedImage.src + (currentLoadedImage.src.includes('?') ? '&' : '?') + 't=' + Date.now();
             });
         }
 
