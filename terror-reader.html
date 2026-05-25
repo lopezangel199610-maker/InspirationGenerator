@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    <title>ÁNGEL - Horror Book AI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --blood: #8b0000;
+            --deep-blood: #4a0000;
+            --ghost: #e8e0d0;
+            --ash: #a09080;
+            --void: #0a0000;
+            --shadow: #1a0505;
+            --fog: #2a1515;
+            --gold: #c8a855;
+            --purple: #3d0060;
+        }
+
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background: var(--void);
+            color: var(--ghost);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* === ATMOSPHERIC BACKGROUND === */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(139,0,0,0.08) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 20%, rgba(61,0,96,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 100%, rgba(74,0,0,0.1) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Flicker animation */
+        @keyframes flicker {
+            0%, 95%, 100% { opacity: 1; }
+            96% { opacity: 0.85; }
+            97% { opacity: 1; }
+            98% { opacity: 0.7; }
+            99% { opacity: 1; }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(139,0,0,0.5), 0 0 30px rgba(139,0,0,0.2); }
+            50% { text-shadow: 0 0 20px rgba(139,0,0,0.8), 0 0 50px rgba(139,0,0,0.4), 0 0 80px rgba(139,0,0,0.1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes agent-pulse {
+            0%, 100% { box-shadow: 0 0 5px currentColor; }
+            50% { box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === NAV === */
+        .nav-bar {
+            position: relative;
+            z-index: 100;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(139,0,0,0.3);
+            background: rgba(10,0,0,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-family: 'Crimson Text', serif;
+            border: 1px solid rgba(139,0,0,0.4);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--ash);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            border-color: var(--blood);
+            color: var(--ghost);
+            background: rgba(139,0,0,0.15);
+        }
+
+        /* === HERO === */
+        .hero {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 50px 20px 30px;
+        }
+
+        .hero-subtitle {
+            font-size: 0.75rem;
+            letter-spacing: 6px;
+            color: var(--blood);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .hero-title {
+            font-family: 'Cinzel Decorative', 'Times New Roman', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            color: var(--ghost);
+            animation: pulse-glow 3s ease-in-out infinite, flicker 8s infinite;
+            letter-spacing: 4px;
+            margin-bottom: 5px;
+        }
+
+        .hero-title span { color: var(--blood); }
+
+        .hero-desc {
+            font-size: 1rem;
+            color: var(--ash);
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .angel-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--blood), var(--purple));
+            color: var(--gold);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            padding: 4px 14px;
+            border-radius: 2px;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* === VIEWS === */
+        .view { display: none; animation: fadeIn 0.5s ease; }
+        .view.active { display: block; }
+
+        .view-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid rgba(139,0,0,0.3);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .view-tab {
+            padding: 12px 24px;
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--ash);
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .view-tab:hover { color: var(--ghost); }
+        .view-tab.active {
+            color: var(--blood);
+            border-bottom-color: var(--blood);
+        }
+
+        /* === AI FAMILY PANEL === */
+        .ai-family-section {
+            margin-bottom: 35px;
+        }
+
+        .section-label {
+            font-size: 0.65rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--blood);
+            margin-bottom: 12px;
+        }
+
+        .family-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .agent-card {
+            background: rgba(26,5,5,0.7);
+            border: 1px solid rgba(139,0,0,0.2);
+            border-radius: 8px;
+            padding: 14px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: currentColor;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .agent-card.active { animation: agent-pulse 1.5s infinite; }
+        .agent-card.active::before { opacity: 1; }
+        .agent-card.done { border-color: rgba(0,180,0,0.4); }
+        .agent-card.done::before { background: #00b400; opacity: 0.8; }
+
+        .agent-icon { font-size: 1.8rem; margin-bottom: 6px; display: block; }
+        .agent-name {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.75rem;
+            color: var(--ghost);
+            letter-spacing: 1px;
+        }
+        .agent-role {
+            font-size: 0.7rem;
+            color: var(--ash);
+            margin: 3px 0;
+        }
+        .agent-status {
+            font-size: 0.7rem;
+            font-style: italic;
+            color: var(--ash);
+            min-height: 14px;
+            margin-top: 6px;
+        }
+        .agent-card.active .agent-status { color: var(--gold); }
+        .agent-card.done .agent-status { color: #5fba5f; }
+
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--ash);
+            display: inline-block;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .agent-card.active .status-dot { background: var(--gold); animation: agent-pulse 1s infinite; }
+        .agent-card.done .status-dot { background: #5fba5f; }
+
+        /* === GENERATOR (CREATE BOOK) VIEW === */
+        .create-form {
+            background: rgba(26,5,5,0.5);
+            border: 1px solid rgba(139,0,0,0.25);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.3rem;
+            color: var(--ghost);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group.full { grid-column: 1 / -1; }
+
+        label {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--ash);
+        }
+
+        input, select, textarea {
+            background: rgba(10,0,0,0.6);
+            border: 1px solid rgba(139,0,0,0.3);
+            border-radius: 4px;
+            padding: 12px 15px;
+            color: var(--ghost);
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--blood);
+        }
+
+        textarea { min-height: 100px; resize: vertical; }
+
+        select option { background: #1a0505; }
+
+        .create-btn {
+            width: 100%;
+            padding: 18px;
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--blood), var(--deep-blood));
+            border: 1px solid rgba(200,168,85,0.3);
+            border-radius: 6px;
+            color: var(--gold);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .create-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #aa0000, var(--blood));
+            box-shadow: 0 0 30px rgba(139,0,0,0.5);
+            transform: translateY(-2px);
+        }
+
+        .create-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* === PROGRESS === */
+        .progress-section {
+            display: none;
+            background: rgba(10,0,0,0.8);
+            border: 1px solid rgba(139,0,0,0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .progress-section.visible { display: block; animation: fadeIn 0.5s ease; }
+
+        .progress-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1rem;
+            color: var(--blood);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .progress-bar-wrap {
+            background: rgba(139,0,0,0.15);
+            border-radius: 20px;
+            height: 6px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blood), var(--gold));
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.8s ease;
+        }
+
+        .progress-log {
+            font-size: 0.85rem;
+            font-style: italic;
+            color: var(--ash);
+            min-height: 20px;
+        }
+
+        .progress-log .log-entry {
+            margin-bottom: 4px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .progress-log .log-entry.active { color: var(--gold); }
+
+        /* === RESULT BOOK === */
+        .result-book {
+            display: none;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .result-book.visible { display: block; }
+
+        .book-result-header {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
+            background: rgba(26,5,5,0.7);
+            border: 1px solid rgba(139,0,0,0.3);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            align-items: start;
+        }
+
+        .book-cover-generated {
+            width: 180px;
+            height: 250px;
+            border-radius: 4px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--deep-blood), var(--void));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(200,168,85,0.3);
+            position: relative;
+        }
+
+        .book-cover-generated img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-cover-generated .cover-placeholder {
+            text-align: center;
+            color: var(--ash);
+            font-size: 3rem;
+        }
+
+        .book-cover-generated .cover-loading {
+            font-size: 2rem;
+            animation: spin-slow 2s linear infinite;
+        }
+
+        .book-meta h2 {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.8rem;
+            color: var(--ghost);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .book-genre-tag {
+            display: inline-block;
+            background: rgba(139,0,0,0.3);
+            border: 1px solid rgba(139,0,0,0.5);
+            color: var(--blood);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 3px 12px;
+            border-radius: 2px;
+            margin-bottom: 12px;
+        }
+
+        .book-synopsis {
+            font-size: 1rem;
+            color: var(--ash);
+            line-height: 1.7;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            font-family: 'Crimson Text', serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid;
+        }
+
+        .action-btn.primary {
+            background: var(--blood);
+            border-color: var(--blood);
+            color: var(--ghost);
+        }
+
+        .action-btn.primary:hover { background: #aa0000; box-shadow: 0 0 20px rgba(139,0,0,0.4); }
+
+        .action-btn.secondary {
+            background: transparent;
+            border-color: rgba(139,0,0,0.4);
+            color: var(--ash);
+        }
+
+        .action-btn.secondary:hover { border-color: var(--blood); color: var(--ghost); }
+
+        .action-btn.gold {
+            background: transparent;
+            border-color: rgba(200,168,85,0.4);
+            color: var(--gold);
+        }
+
+        .action-btn.gold:hover { border-color: var(--gold); background: rgba(200,168,85,0.1); }
+
+        /* === READER MODE === */
+        .reader-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(5,0,0,0.97);
+            z-index: 200;
+            overflow-y: auto;
+        }
+
+        .reader-overlay.open { display: block; animation: fadeIn 0.5s ease; }
+
+        .reader-controls {
+            position: sticky;
+            top: 0;
+            background: rgba(10,0,0,0.95);
+            border-bottom: 1px solid rgba(139,0,0,0.3);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .reader-book-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.9rem;
+            color: var(--blood);
+            letter-spacing: 2px;
+        }
+
+        .close-reader {
+            background: transparent;
+            border: 1px solid rgba(139,0,0,0.4);
+            color: var(--ash);
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Crimson Text', serif;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .close-reader:hover { border-color: var(--blood); color: var(--ghost); }
+
+        .reader-content {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 50px 30px 80px;
+        }
+
+        .reader-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            color: var(--ghost);
+            text-align: center;
+            margin-bottom: 8px;
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        .reader-genre {
+            text-align: center;
+            color: var(--blood);
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+        }
+
+        .chapter-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.2rem;
+            color: var(--blood);
+            margin: 40px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(139,0,0,0.2);
+        }
+
+        .chapter-text {
+            font-size: 1.15rem;
+            line-height: 1.95;
+            color: var(--ghost);
+            text-align: justify;
+        }
+
+        .chapter-text p { margin-bottom: 1.2em; }
+
+        .chapter-divider {
+            text-align: center;
+            color: var(--blood);
+            font-size: 1.5rem;
+            margin: 30px 0;
+            letter-spacing: 10px;
+            opacity: 0.6;
+        }
+
+        /* === MARKETING SECTION === */
+        .marketing-section {
+            display: none;
+            background: rgba(20,5,20,0.6);
+            border: 1px solid rgba(61,0,96,0.4);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .marketing-section.visible { display: block; animation: fadeIn 0.5s ease; }
+
+        .marketing-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .marketing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) { .marketing-grid { grid-template-columns: 1fr; } }
+
+        .marketing-card {
+            background: rgba(10,0,10,0.6);
+            border: 1px solid rgba(61,0,96,0.3);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .marketing-card-label {
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .marketing-card-text {
+            font-size: 0.9rem;
+            color: var(--ash);
+            line-height: 1.6;
+        }
+
+        .hashtag { color: var(--blood); font-weight: bold; }
+
+        .copy-mkt-btn {
+            margin-top: 8px;
+            background: transparent;
+            border: 1px solid rgba(200,168,85,0.3);
+            color: var(--gold);
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-mkt-btn:hover { border-color: var(--gold); }
+
+        /* === LIBRARY VIEW === */
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .book-card {
+            background: rgba(26,5,5,0.6);
+            border: 1px solid rgba(139,0,0,0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .book-card:hover {
+            border-color: var(--blood);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(139,0,0,0.2);
+        }
+
+        .book-card-cover {
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-card-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+        }
+
+        .book-card-cover .emoji-cover {
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 0 10px rgba(139,0,0,0.8));
+        }
+
+        .book-card-info { padding: 15px; }
+
+        .book-card-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.85rem;
+            color: var(--ghost);
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .book-card-genre {
+            font-size: 0.7rem;
+            color: var(--blood);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .book-card-desc {
+            font-size: 0.85rem;
+            color: var(--ash);
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .book-card-btn {
+            display: block;
+            width: 100%;
+            margin-top: 12px;
+            padding: 8px;
+            background: rgba(139,0,0,0.2);
+            border: 1px solid rgba(139,0,0,0.4);
+            border-radius: 3px;
+            color: var(--ghost);
+            font-family: 'Crimson Text', serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .book-card-btn:hover { background: rgba(139,0,0,0.4); }
+
+        /* === ABOUT VIEW === */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; } }
+
+        .paper-card {
+            background: rgba(26,5,5,0.5);
+            border: 1px solid rgba(139,0,0,0.2);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .paper-number {
+            font-size: 2rem;
+            color: rgba(139,0,0,0.3);
+            font-family: 'Cinzel Decorative', serif;
+            margin-bottom: 5px;
+        }
+
+        .paper-title {
+            font-size: 0.9rem;
+            color: var(--ghost);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .paper-source {
+            font-size: 0.75rem;
+            color: var(--blood);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .paper-desc {
+            font-size: 0.85rem;
+            color: var(--ash);
+            line-height: 1.6;
+        }
+
+        .angel-family-card {
+            background: linear-gradient(135deg, rgba(139,0,0,0.15), rgba(61,0,96,0.15));
+            border: 1px solid rgba(200,168,85,0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .angel-name-big {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 3rem;
+            color: var(--ghost);
+            animation: pulse-glow 3s ease-in-out infinite;
+            margin-bottom: 5px;
+        }
+
+        .angel-full-name {
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .angel-desc {
+            font-size: 1rem;
+            color: var(--ash);
+            font-style: italic;
+            line-height: 1.7;
+        }
+
+        /* === TOAST === */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--blood);
+            color: var(--ghost);
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .book-result-header { grid-template-columns: 1fr; }
+            .book-cover-generated { width: 140px; height: 200px; margin: 0 auto; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav-bar">
+    <a class="nav-link" href="index.html">Frases</a>
+    <a class="nav-link" href="logo-angel.html">Logo Angel</a>
+    <a class="nav-link" href="logo-rea.html">Logo REA</a>
+    <a class="nav-link active" href="terror-reader.html">ÁNGEL Horror</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-subtitle">✦ Powered by AI Family ✦</div>
+    <h1 class="hero-title">Á<span>N</span>GEL</h1>
+    <p class="hero-desc">Agente Neural Generador de Escritura Literaria</p>
+    <span class="angel-badge">Horror Book Creator · Publisher · Marketing</span>
+</div>
+
+<!-- MAIN -->
+<div class="main-container">
+
+    <!-- AI FAMILY PANEL -->
+    <div class="ai-family-section">
+        <div class="section-label">✦ La Familia de AI — Construyendo ÁNGEL</div>
+        <div class="family-grid">
+            <div class="agent-card" id="agent-narrador" style="color: #8b0000;">
+                <span class="agent-icon">📖</span>
+                <div class="agent-name">El Narrador</div>
+                <div class="agent-role">Orquestador General</div>
+                <div class="agent-status"><span class="status-dot"></span><span class="status-text">En espera...</span></div>
+            </div>
+            <div class="agent-card" id="agent-escritor" style="color: #7a00aa;">
+                <span class="agent-icon">✍️</span>
+                <div class="agent-name">El Escritor</div>
+                <div class="agent-role">Creador de Historias</div>
+                <div class="agent-status"><span class="status-dot"></span><span class="status-text">En espera...</span></div>
+            </div>
+            <div class="agent-card" id="agent-editor" style="color: #0040aa;">
+                <span class="agent-icon">🔍</span>
+                <div class="agent-name">El Editor</div>
+                <div class="agent-role">Revisor & Refinador</div>
+                <div class="agent-status"><span class="status-dot"></span><span class="status-text">En espera...</span></div>
+            </div>
+            <div class="agent-card" id="agent-disenador" style="color: #aa8800;">
+                <span class="agent-icon">🎨</span>
+                <div class="agent-name">El Diseñador</div>
+                <div class="agent-role">Portadas & Visual</div>
+                <div class="agent-status"><span class="status-dot"></span><span class="status-text">En espera...</span></div>
+            </div>
+            <div class="agent-card" id="agent-mercader" style="color: #00608a;">
+                <span class="agent-icon">📣</span>
+                <div class="agent-name">El Mercader</div>
+                <div class="agent-role">Marketing & Publicación</div>
+                <div class="agent-status"><span class="status-dot"></span><span class="status-text">En espera...</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW TABS -->
+    <div class="view-tabs">
+        <button class="view-tab active" onclick="switchView('create')">✦ Crear Libro</button>
+        <button class="view-tab" onclick="switchView('library')">📚 Biblioteca</button>
+        <button class="view-tab" onclick="switchView('about')">🧬 Ciencia</button>
+    </div>
+
+    <!-- CREATE VIEW -->
+    <div class="view active" id="view-create">
+
+        <div class="create-form">
+            <div class="form-title">
+                <span>⚡</span>
+                <span>Activa a ÁNGEL — Crea tu Libro de Terror</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Título del Libro</label>
+                    <input type="text" id="bookTitle" placeholder="Ej: La Casa del Espejo Roto" maxlength="80">
+                </div>
+                <div class="form-group">
+                    <label>Subgénero de Terror</label>
+                    <select id="bookGenre">
+                        <option value="terror psicológico">Terror Psicológico</option>
+                        <option value="terror sobrenatural">Terror Sobrenatural</option>
+                        <option value="terror gótico">Terror Gótico</option>
+                        <option value="terror cósmico lovecraftiano">Terror Cósmico (Lovecraft)</option>
+                        <option value="terror urbano">Terror Urbano</option>
+                        <option value="terror paranormal">Terror Paranormal</option>
+                        <option value="slasher suspense">Slasher / Suspense</option>
+                        <option value="terror folclórico mexicano">Terror Folclórico Mexicano</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Personaje Principal</label>
+                    <input type="text" id="bookChar" placeholder="Ej: Una mujer que hereda una mansión" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>Elemento de Terror</label>
+                    <input type="text" id="bookElement" placeholder="Ej: Espejos que muestran el futuro" maxlength="100">
+                </div>
+                <div class="form-group full">
+                    <label>Idea adicional (opcional)</label>
+                    <textarea id="bookIdea" placeholder="Agrega contexto, giros de trama o elementos especiales que quieras incluir..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Capítulos a generar</label>
+                    <select id="bookChapters">
+                        <option value="2">2 Capítulos (rápido)</option>
+                        <option value="3" selected>3 Capítulos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Idioma</label>
+                    <select id="bookLang">
+                        <option value="español">Español</option>
+                        <option value="english">English</option>
+                        <option value="spanglish">Spanglish</option>
+                    </select>
+                </div>
+            </div>
+            <button class="create-btn" id="createBtn" onclick="activateAngel()">
+                ⚡ ACTIVAR ÁNGEL — CREAR LIBRO COMPLETO
+            </button>
+        </div>
+
+        <!-- PROGRESS -->
+        <div class="progress-section" id="progressSection">
+            <div class="progress-title">🔮 ÁNGEL trabajando...</div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-log" id="progressLog"></div>
+        </div>
+
+        <!-- RESULT BOOK -->
+        <div class="result-book" id="resultBook">
+
+            <div class="book-result-header" id="bookHeader">
+                <div class="book-cover-generated" id="coverContainer">
+                    <div class="cover-placeholder">
+                        <span class="cover-loading">⚙️</span>
+                    </div>
+                </div>
+                <div class="book-meta">
+                    <div class="book-genre-tag" id="resultGenre">Terror</div>
+                    <h2 id="resultTitle">Título del Libro</h2>
+                    <p class="book-synopsis" id="resultSynopsis">Sinopsis aquí...</p>
+                    <div class="book-actions">
+                        <button class="action-btn primary" onclick="openReader()">📖 Leer Ahora</button>
+                        <button class="action-btn secondary" onclick="downloadBook()">⬇ Descargar HTML</button>
+                        <button class="action-btn gold" onclick="showMarketing()">📣 Ver Marketing</button>
+                        <button class="action-btn secondary" onclick="saveToLibrary()">📚 Guardar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MARKETING -->
+            <div class="marketing-section" id="marketingSection">
+                <div class="marketing-title">
+                    <span>📣</span>
+                    <span>El Mercader — Materiales de Marketing</span>
+                </div>
+                <div class="marketing-grid" id="marketingGrid"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- LIBRARY VIEW -->
+    <div class="view" id="view-library">
+        <div class="section-label" style="margin-bottom:20px;">✦ Biblioteca de Horror — Historias Clásicas + Tus Creaciones</div>
+        <div class="library-grid" id="libraryGrid"></div>
+    </div>
+
+    <!-- ABOUT (SCIENCE) VIEW -->
+    <div class="view" id="view-about">
+
+        <div class="angel-family-card">
+            <div class="angel-name-big">ÁNGEL</div>
+            <div class="angel-full-name">Agente Neural Generador de Escritura Literaria</div>
+            <p class="angel-desc">
+                ÁNGEL no es un solo AI — es el resultado de 5 agentes especializados trabajando en familia.<br>
+                Inspirado en los últimos papers de sistemas multi-agente (2024-2025), cada miembro de la familia
+                tiene un rol único, y juntos crean algo que ninguno podría hacer solo.
+            </p>
+        </div>
+
+        <div class="section-label" style="margin-bottom:15px;">✦ Papers Científicos que Inspiraron ÁNGEL</div>
+        <div class="about-grid">
+            <div class="paper-card">
+                <div class="paper-number">01</div>
+                <div class="paper-title">BookWorld: From Novels to Interactive Agent Societies</div>
+                <div class="paper-source">arXiv 2504.14538 · 2025</div>
+                <p class="paper-desc">Generación de historias mediante agentes autor-editor-actor que colaboran para crear narrativas coherentes y largas. Base para El Escritor y El Editor de ÁNGEL.</p>
+            </div>
+            <div class="paper-card">
+                <div class="paper-number">02</div>
+                <div class="paper-title">AGENTS' ROOM: Narrative Generation Through Multi-step Collaboration</div>
+                <div class="paper-source">arXiv 2410.02603 · 2024</div>
+                <p class="paper-desc">Marco orquestador-agentes donde un coordinador central delega tareas a agentes especializados. Base para El Narrador (orquestador) de ÁNGEL.</p>
+            </div>
+            <div class="paper-card">
+                <div class="paper-number">03</div>
+                <div class="paper-title">StoryWriter: A Multi-Agent Framework for Long Story Generation</div>
+                <div class="paper-source">ACM CIKM 2025 · arXiv 2506.16445</div>
+                <p class="paper-desc">Sistema de múltiples agentes para generar historias largas con consistencia narrativa. Validó el diseño de capítulos secuenciales en ÁNGEL.</p>
+            </div>
+            <div class="paper-card">
+                <div class="paper-number">04</div>
+                <div class="paper-title">Multi-Agent Collaboration Mechanisms: A Survey of LLMs</div>
+                <div class="paper-source">arXiv 2501.06322 · 2025</div>
+                <p class="paper-desc">Survey completo de mecanismos de colaboración: roles de planeación, ejecución y evaluación. Base para los 5 roles diferenciados de la familia ÁNGEL.</p>
+            </div>
+            <div class="paper-card">
+                <div class="paper-number">05</div>
+                <div class="paper-title">Agentic AI: Architectures, Applications and Future Directions</div>
+                <div class="paper-source">arXiv 2510.25445 · 2025</div>
+                <p class="paper-desc">Taxonomía completa de sistemas agénticos con roles especializados (planner, executor, critic). Inspiró la separación entre El Editor (critic) y El Escritor (executor).</p>
+            </div>
+            <div class="paper-card">
+                <div class="paper-number">06</div>
+                <div class="paper-title">Orchestrating Human-AI Teams: The Manager Agent</div>
+                <div class="paper-source">ACM DAI 2025</div>
+                <p class="paper-desc">El patrón Manager-Agent (orquestador) donde un agente maestro descompone tareas complejas y las distribuye. El Narrador de ÁNGEL sigue exactamente este patrón.</p>
+            </div>
+        </div>
+
+        <div class="section-label" style="margin:30px 0 15px;">✦ Arquitectura de ÁNGEL</div>
+        <div class="paper-card" style="margin-bottom:0;">
+            <div style="font-family: monospace; font-size: 0.8rem; color: var(--ash); line-height: 2;">
+                <span style="color:var(--blood);">USUARIO</span> → input: tema + título + personaje<br>
+                &nbsp;&nbsp;↓<br>
+                <span style="color:#8b0000;">📖 NARRADOR (Orquestador)</span> → coordina el flujo<br>
+                &nbsp;&nbsp;↓<br>
+                <span style="color:#7a00aa;">✍️ ESCRITOR</span> → genera historia (HuggingFace LLM API)<br>
+                &nbsp;&nbsp;↓<br>
+                <span style="color:#0040aa;">🔍 EDITOR</span> → refina y mejora calidad (2do LLM call)<br>
+                &nbsp;&nbsp;↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                <span style="color:#aa8800;">🎨 DISEÑADOR</span> &nbsp;&nbsp; <span style="color:#00608a;">📣 MERCADER</span><br>
+                portada (FLUX) &nbsp;&nbsp;&nbsp;&nbsp; marketing + hashtags<br>
+                &nbsp;&nbsp;↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                <span style="color:var(--gold);">⚡ ÁNGEL — Libro Completo + Portada + Marketing</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- READER OVERLAY -->
+<div class="reader-overlay" id="readerOverlay">
+    <div class="reader-controls">
+        <div class="reader-book-title" id="readerBookTitle">Leyendo...</div>
+        <button class="close-reader" onclick="closeReader()">✕ Cerrar</button>
+    </div>
+    <div class="reader-content" id="readerContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// === AI FAMILY DEFINITIONS (from research papers) ===
+const AIFamily = {
+    narrador: {
+        id: 'narrador', name: 'El Narrador', role: 'Orquestador',
+        paper: 'Manager Agent pattern (ACM DAI 2025)'
+    },
+    escritor: {
+        id: 'escritor', name: 'El Escritor', role: 'Autor Principal',
+        paper: 'BookWorld Author Agent (arXiv 2504.14538)'
+    },
+    editor: {
+        id: 'editor', name: 'El Editor', role: 'Crítico/Refinador',
+        paper: 'Agentic AI Critic Role (arXiv 2510.25445)'
+    },
+    disenador: {
+        id: 'disenador', name: 'El Diseñador', role: 'Visual/Portada',
+        paper: 'FLUX.1 Image Agent'
+    },
+    mercader: {
+        id: 'mercader', name: 'El Mercader', role: 'Marketing',
+        paper: 'Multi-Agent Pipeline (arXiv 2501.06322)'
+    }
+};
+
+// === STATIC HORROR LIBRARY ===
+const staticBooks = [
+    {
+        id: 's1',
+        title: 'La Casa de los Espejos',
+        genre: 'Terror Psicológico',
+        emoji: '🪞',
+        coverBg: 'linear-gradient(135deg, #1a0000, #000020)',
+        desc: 'Una familia descubre que los espejos de su nueva casa muestran un mundo diferente al real...',
+        content: [
+            {
+                chapter: 'Capítulo I — La Mudanza',
+                text: `<p>Elena Voss nunca había creído en el destino. Pero cuando el notario le entregó las llaves de la vieja casona de su bisabuela —una mansión de tres pisos en las afueras del pueblo— algo en sus dedos tembló.</p>
+                <p>"La casa lleva doce años vacía," dijo el notario sin mirarla. "Doce años exactos."</p>
+                <p>La familia llegó al anochecer. Mientras su marido desempacaba cajas y los niños corrían por los pasillos, Elena exploró las habitaciones. En cada una había espejos: enormes, de marco dorado, con el vidrio ligeramente oscurecido por el tiempo.</p>
+                <p>Fue en el cuarto principal donde lo notó por primera vez. En el reflejo, junto a la cama —que en la realidad estaba vacía— había una silla de madera oscura. Una silla que no existía en el cuarto real.</p>
+                <p>Elena parpadeó. Miró detrás de ella. Nada.</p>
+                <p>Miró el espejo de nuevo. La silla seguía ahí. Y en la silla, una forma borrosa que podría haber sido —si uno dejaba que su mente se fuera a lugares oscuros— la silueta de alguien sentado.</p>`
+            },
+            {
+                chapter: 'Capítulo II — Las 3:33',
+                text: `<p>Esa noche, Elena despertó exactamente a las 3:33 de la madrugada. Lo supo sin mirar el reloj: el número simplemente estaba en su mente, grabado ahí como una marca de hierro.</p>
+                <p>El espejo al fondo del cuarto brillaba con una luz propia. No era el reflejo de la luna —las cortinas estaban cerradas— sino algo interno, como si el vidrio mismo fuera una ventana hacia un lugar donde las luces permanecían encendidas.</p>
+                <p>La silla seguía en el reflejo. Pero ahora no estaba vacía.</p>
+                <p>La figura era clara: una mujer anciana, con el pelo suelto y blanco, sentada con las manos sobre las rodillas. No se movía. Solo miraba. Miraba hacia afuera del espejo con ojos que, aunque reflejados, Elena sentía directamente sobre su piel.</p>
+                <p>Encendió la luz.</p>
+                <p>El reflejo se normalizó: cama, cuarto, Elena con la cara pálida. Pero en el suelo, junto a donde debería estar la silla, había una huella perfecta en el polvo. La marca de dos patas de madera. Reciente.</p>`
+            },
+            {
+                chapter: 'Capítulo III — Lo Que Dijo el Espejo',
+                text: `<p>Al tercer día, Elena cubrió todos los espejos con sábanas. Pero los niños las quitaban sin explicación, atraídos hacia esos rectángulos oscuros como polillas a la llama.</p>
+                <p>La figura comenzó a aparecer en otros espejos. En el del baño. En el del pasillo. En el pequeño espejo redondo que Elena cargaba en su bolso. Siempre la misma anciana. Siempre en la silla. Siempre mirando.</p>
+                <p>El séptimo día, cuando ya no podía más, Elena fue al espejo principal con un martillo.</p>
+                <p>"Voy a romperlo," dijo en voz alta, tanto para la figura como para sí misma.</p>
+                <p>La anciana del reflejo movió los labios.</p>
+                <p>Elena se acercó. Acercó el oído al vidrio frío, sin pensar, sin razonar.</p>
+                <p>La voz llegó desde el otro lado como un susurro de papel viejo:</p>
+                <p><em>"No puedes salir de aquí. Yo ya lo intenté."</em></p>
+                <p>El martillo cayó al suelo. Elena miró su propio reflejo, y vio —por primera vez, con claridad— que detrás de ella en el espejo no había un cuarto. Había una habitación diferente. Una habitación sin puertas.</p>
+                <p>Y en esa habitación sin puertas, había otra silla. Vacía. Esperando.</p>`
+            }
+        ]
+    },
+    {
+        id: 's2',
+        title: 'El Último Pasajero',
+        genre: 'Terror Sobrenatural',
+        emoji: '🚇',
+        coverBg: 'linear-gradient(135deg, #000010, #0a0020)',
+        desc: 'El conductor del metro nocturno recoge a un pasajero que no debería existir...',
+        content: [
+            {
+                chapter: 'Capítulo I — El Turno de Noche',
+                text: `<p>Marco Díaz llevaba catorce años conduciendo el último metro de la noche, el que salía a la 1:17 AM y recorría las doce estaciones de la línea fantasma —así la llamaban los conductores, porque casi nunca subía nadie.</p>
+                <p>Esa noche de noviembre, con la tormenta golpeando los túneles, Marco vio al hombre en la estación Catedral.</p>
+                <p>Viejo. Traje negro con rayas blancas, del estilo que usaban los hombres en los años cincuenta. Sombrero de fieltro. Se subió al vagón vacío con pasos lentos y se sentó en el primer asiento, mirando al frente.</p>
+                <p>Marco abrió la ventanilla.</p>
+                <p>"Señor, ¿a qué estación va?"</p>
+                <p>El viejo no contestó. Pero metió la mano al bolsillo del saco y sacó una moneda, que colocó sobre el borde de la ventanilla con un sonido metálico preciso.</p>
+                <p>Marco la recogió. Era una moneda de cinco pesos. Pero del tipo que no circulaba desde 1975.</p>`
+            },
+            {
+                chapter: 'Capítulo II — Las Cámaras',
+                text: `<p>Durante su pausa en la estación Terminal, Marco revisó las grabaciones de las cámaras de seguridad en su tablet. Rutina de siempre.</p>
+                <p>El viejo aparecía en todas las cámaras. Pero no como Marco esperaba.</p>
+                <p>En la cámara de la estación Catedral —donde había subido— el viejo ya estaba ahí antes de que llegara el metro. Sentado en una banca que no existía en la estación actual, frente a una taquilla que habían demolido en 1998.</p>
+                <p>En la cámara de la estación Mercado —la tercera parada— el viejo estaba en el andén, de pie, mirando pasar el metro desde afuera, al mismo tiempo que, según el video del vagón, estaba sentado adentro.</p>
+                <p>Marco contó las cámaras: doce estaciones, doce grabaciones. En todas, el viejo aparecía. Dentro y fuera del tren. Al mismo tiempo. Con la misma postura inmóvil. Con los mismos ojos fijos en un punto que las cámaras no podían capturar.</p>
+                <p>Marco cerró la tablet. Sus manos no temblaban todavía. Todavía.</p>`
+            },
+            {
+                chapter: 'Capítulo III — La Moneda',
+                text: `<p>Al final del turno, Marco llegó a la cabina para registrar el kilometraje. La moneda de 1975 estaba sobre el tablero, donde él la había dejado.</p>
+                <p>Junto a ella había un periódico doblado. Marco no recordaba haberlo subido. La fecha del periódico era del 14 de noviembre de 1975.</p>
+                <p>En la primera plana, debajo de una foto borrosa de una estación de metro, el titular decía:</p>
+                <p><em>MUERE HÉCTOR VALDEZ, CONDUCTOR EMBLEMA DE LA LÍNEA 2, LUEGO DE 30 AÑOS DE SERVICIO.</em></p>
+                <p>Marco miró la foto. El hombre de la foto —el conductor muerto, el que había dado treinta años de su vida a esa línea— usaba un traje negro con rayas blancas. Sombrero de fieltro.</p>
+                <p>Era el mismo viejo.</p>
+                <p>Marco salió corriendo de la cabina. El vagón estaba vacío, como siempre al final del turno. Pero en el primer asiento, donde el viejo había estado sentado, había una indentación en el vinilo: la marca del peso de un cuerpo que llevaba décadas sin tener peso.</p>
+                <p>Y sobre el asiento, otra moneda de 1975.</p>
+                <p>Marco entendió, mirando la moneda en su mano, que Héctor Valdez nunca había terminado su último turno. Y que él —Marco— era ya el segundo conductor en descubrirlo.</p>`
+            }
+        ]
+    },
+    {
+        id: 's3',
+        title: 'La Llamada del 4:44',
+        genre: 'Terror Paranormal',
+        emoji: '📱',
+        coverBg: 'linear-gradient(135deg, #001a00, #0a0010)',
+        desc: 'Cada noche a las 4:44 AM, el teléfono suena. Y la voz al otro lado conoce cosas imposibles...',
+        content: [
+            {
+                chapter: 'Capítulo I — Primera Llamada',
+                text: `<p>La primera vez que sonó a las 4:44 AM, Sofía pensó que era un error. Número desconocido. Rechazó la llamada y volvió a dormir.</p>
+                <p>La segunda noche, a las 4:44 AM exactas, volvió a sonar. Esta vez contestó.</p>
+                <p>Silencio. Pero no el silencio vacío de una línea muerta. Era el silencio de alguien que respira pero no habla. Alguien que espera.</p>
+                <p>"¿Bueno?" dijo Sofía.</p>
+                <p>"El cajón del lado izquierdo de tu escritorio," dijo la voz. Mujer. Joven. Conocida de alguna manera que Sofía no podía ubicar. "Tercera carta. Léela."</p>
+                <p>La llamada cortó.</p>
+                <p>Sofía fue al escritorio. No había razón para hacerlo; era la madrugada, era absurdo, era exactamente el tipo de cosa que una persona racional no hace.</p>
+                <p>La hizo de todas formas. En el cajón izquierdo, entre papeles viejos, había una carta que no recordaba haber guardado. Era su propia letra. Y decía cosas que ella no había escrito todavía.</p>`
+            },
+            {
+                chapter: 'Capítulo II — Lo Que Sabe',
+                text: `<p>La voz llamó siete noches consecutivas. Siempre a las 4:44. Siempre con información que Sofía no podía explicar: el nombre del hombre que la llamaría el martes para ofrecerle trabajo, la enfermedad que su madre aún no sabía que tenía, el accidente en la avenida principal que ocurriría el jueves a las 3 PM.</p>
+                <p>Todo ocurrió. Exactamente como la voz lo describió.</p>
+                <p>"¿Quién eres?" preguntó Sofía en la quinta llamada.</p>
+                <p>"Tú ya lo sabes," dijo la voz.</p>
+                <p>"No lo sé."</p>
+                <p>"Sí lo sabes. Lo supiste desde la primera noche. Por eso sigues contestando."</p>
+                <p>Sofía guardó silencio. Y en ese silencio, con la frialdad de algo que siempre había estado ahí, lo supo: la voz era la suya. Exactamente la suya. Pero con algo diferente. Con algo que se aprende después de cierto tipo de experiencias.</p>
+                <p>"¿Desde cuándo me llamas?" preguntó.</p>
+                <p>"Desde que lo necesitaste."</p>
+                <p>"¿Y cuándo dejarás de llamar?"</p>
+                <p>Pausa. El tipo de pausa que precede a las verdades incómodas.</p>
+                <p>"Cuando ya no pueda."</p>`
+            },
+            {
+                chapter: 'Capítulo III — La Última Llamada',
+                text: `<p>La decimocuarta noche, a las 4:44 AM, el teléfono no sonó.</p>
+                <p>Sofía esperó hasta las 5. Hasta las 6. El silencio fue más aterrador que cualquier llamada.</p>
+                <p>A las 9 AM del mismo día, encontró entre sus contactos un número que no había guardado. Era el número desde el que habían llamado todas las noches.</p>
+                <p>Marcó.</p>
+                <p>Contestaron al primer tono.</p>
+                <p>"Sofía Reyes," dijo la recepcionista. "Hospital General de Zona. ¿En qué le podemos ayudar?"</p>
+                <p>El teléfono se le cayó de las manos.</p>
+                <p>Era el número del hospital. Específicamente, según descubrió después de llamar de nuevo con voz temblorosa, el número de la unidad de cuidados intensivos. Y esa mañana, en esa unidad, habían ingresado a una mujer de su misma edad, con su mismo apellido, que había llegado sin identificación y que llevaba en coma exactamente catorce días.</p>
+                <p>Catorce días. Una por cada llamada.</p>
+                <p>Esa noche, Sofía se sentó junto a la cama de la mujer del hospital. Le tomó la mano. Y aunque la mujer estaba inconsciente, aunque los monitores marcaban un sueño profundo sin actividad cerebral, Sofía sintió que los dedos se cerraban sobre los suyos.</p>
+                <p>Y supo, con la certeza de algo que no se aprende sino que se recuerda, que mañana a las 4:44 AM, en algún lugar, un teléfono volvería a sonar.</p>`
+            }
+        ]
+    }
+];
+
+// State
+let currentBook = null;
+let generatedBooks = [];
+let currentLibrary = [...staticBooks];
+
+// === TOKEN ===
+function getHFToken() { return localStorage.getItem('hf_token'); }
+
+// === VIEW SWITCH ===
+function switchView(view) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('view-' + view).classList.add('active');
+    event.target.classList.add('active');
+    if (view === 'library') renderLibrary();
+}
+
+// === AGENT STATUS ===
+function setAgentStatus(agentId, status, text) {
+    const card = document.getElementById('agent-' + agentId);
+    if (!card) return;
+    card.className = 'agent-card';
+    if (status === 'active') card.classList.add('active');
+    if (status === 'done') card.classList.add('done');
+    card.querySelector('.status-text').textContent = text;
+}
+
+function resetAgents() {
+    Object.keys(AIFamily).forEach(key => {
+        setAgentStatus(key, 'idle', 'En espera...');
+    });
+}
+
+function setProgress(pct, logText) {
+    document.getElementById('progressBar').style.width = pct + '%';
+    if (logText) {
+        const log = document.getElementById('progressLog');
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.textContent = logText;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+    }
+}
+
+async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// === MAIN ANGEL ACTIVATION ===
+async function activateAngel() {
+    const token = getHFToken();
+    if (!token) {
+        const t = prompt('Para activar ÁNGEL necesitas un token de Hugging Face (gratis):\nPégalo aquí:');
+        if (t && t.startsWith('hf_')) {
+            localStorage.setItem('hf_token', t);
+        } else {
+            showToast('Token inválido. Necesitas un token que empiece con hf_');
+            return;
+        }
+    }
+
+    const title = document.getElementById('bookTitle').value.trim() || 'Sin Título';
+    const genre = document.getElementById('bookGenre').value;
+    const char = document.getElementById('bookChar').value.trim() || 'un protagonista misterioso';
+    const element = document.getElementById('bookElement').value.trim() || 'una presencia sobrenatural';
+    const idea = document.getElementById('bookIdea').value.trim();
+    const chapters = parseInt(document.getElementById('bookChapters').value);
+    const lang = document.getElementById('bookLang').value;
+
+    // Reset UI
+    resetAgents();
+    document.getElementById('progressLog').innerHTML = '';
+    document.getElementById('progressSection').classList.add('visible');
+    document.getElementById('resultBook').classList.remove('visible');
+    document.getElementById('marketingSection').classList.remove('visible');
+    document.getElementById('createBtn').disabled = true;
+
+    try {
+        // --- NARRADOR (Orchestrator) ---
+        setAgentStatus('narrador', 'active', 'Coordinando la creación...');
+        setProgress(5, '📖 El Narrador: Analizando el proyecto literario...');
+        await sleep(800);
+        setProgress(10, '📖 El Narrador: Distribuyendo tareas a la familia...');
+        await sleep(500);
+        setAgentStatus('narrador', 'done', 'Plan de creación listo ✓');
+
+        // --- ESCRITOR (Author) ---
+        setAgentStatus('escritor', 'active', 'Escribiendo la historia...');
+        setProgress(15, '✍️ El Escritor: Activando modelo de lenguaje...');
+
+        const storyPrompt = buildStoryPrompt(title, genre, char, element, idea, chapters, lang);
+        let storyContent = '';
+
+        setProgress(25, '✍️ El Escritor: Generando narrativa de terror...');
+
+        try {
+            storyContent = await callHFTextAPI(storyPrompt, 1200);
+            setProgress(50, '✍️ El Escritor: Historia principal completa ✓');
+        } catch (e) {
+            storyContent = generateFallbackStory(title, genre, char, element, chapters, lang);
+            setProgress(50, '✍️ El Escritor: Usando modo offline (sin token válido)');
+        }
+
+        setAgentStatus('escritor', 'done', 'Historia escrita ✓');
+
+        // --- EDITOR (Critic) ---
+        setAgentStatus('editor', 'active', 'Refinando la narrativa...');
+        setProgress(55, '🔍 El Editor: Revisando calidad literaria...');
+        await sleep(600);
+
+        let synopsis = '';
+        try {
+            const synopsisPrompt = `Write a dark, atmospheric 2-sentence synopsis in ${lang} for a horror book titled "${title}" about: ${char}, involving ${element}. Genre: ${genre}. Be evocative and mysterious.`;
+            synopsis = await callHFTextAPI(synopsisPrompt, 150);
+            synopsis = synopsis.trim().split('\n')[0];
+        } catch (e) {
+            synopsis = `En las sombras donde la razón termina y el miedo comienza, "${title}" te llevará a un viaje sin retorno. Una historia de ${genre} que te perseguirá mucho después de cerrar la última página.`;
+        }
+
+        setProgress(65, '🔍 El Editor: Sinopsis refinada ✓');
+        setAgentStatus('editor', 'done', 'Edición completa ✓');
+
+        // --- DISEÑADOR (Visual) ---
+        setAgentStatus('disenador', 'active', 'Creando portada...');
+        setProgress(70, '🎨 El Diseñador: Generando portada con FLUX.1...');
+
+        const coverUrl = await generateCover(title, genre, element, char);
+        setProgress(80, '🎨 El Diseñador: Portada lista ✓');
+        setAgentStatus('disenador', 'done', 'Portada creada ✓');
+
+        // --- MERCADER (Marketing) ---
+        setAgentStatus('mercader', 'active', 'Creando materiales de marketing...');
+        setProgress(85, '📣 El Mercader: Generando estrategia de marketing...');
+
+        const marketing = await generateMarketing(title, genre, synopsis, lang);
+        setProgress(95, '📣 El Mercader: Marketing listo ✓');
+        setAgentStatus('mercader', 'done', 'Marketing completo ✓');
+
+        // --- NARRADOR (Final Delivery) ---
+        setAgentStatus('narrador', 'active', 'Entregando libro final...');
+        setProgress(98, '📖 El Narrador: Ensamblando el libro completo...');
+        await sleep(500);
+        setAgentStatus('narrador', 'done', 'ÁNGEL completó el libro ✓');
+        setProgress(100, '⚡ ÁNGEL: ¡Libro completo listo!');
+
+        // Build book object
+        currentBook = {
+            id: 'g' + Date.now(),
+            title,
+            genre,
+            synopsis,
+            coverUrl,
+            storyContent,
+            marketing,
+            char,
+            element,
+            emoji: getGenreEmoji(genre),
+            coverBg: 'linear-gradient(135deg, #1a0000, #000010)',
+            generated: true
+        };
+
+        // Display result
+        await sleep(400);
+        displayResult(currentBook);
+
+    } catch (err) {
+        setProgress(100, '❌ Error: ' + err.message);
+        showToast('Error: ' + err.message.substring(0, 60));
+    } finally {
+        document.getElementById('createBtn').disabled = false;
+    }
+}
+
+// === HuggingFace API ===
+async function callHFTextAPI(prompt, maxTokens = 800) {
+    const token = getHFToken();
+    const model = 'mistralai/Mistral-7B-Instruct-v0.2';
+    const url = `https://router.huggingface.co/hf-inference/models/${model}/v1/chat/completions`;
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            model,
+            messages: [
+                {
+                    role: 'system',
+                    content: 'You are a master horror fiction writer. You write atmospheric, literary, and genuinely terrifying stories with rich prose and psychological depth. Your writing is evocative and cinematic.'
+                },
+                { role: 'user', content: prompt }
+            ],
+            max_tokens: maxTokens,
+            temperature: 0.9
+        })
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`API ${response.status}: ${text.substring(0, 100)}`);
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || '';
+}
+
+async function generateCover(title, genre, element, char) {
+    const token = getHFToken();
+    if (!token) return null;
+
+    const coverPrompt = `Book cover for horror novel "${title}". Genre: ${genre}. Theme: ${element}. Dark and atmospheric illustration, gothic style, dramatic lighting, blood red and black color palette, haunting and eerie mood, professional book cover art, no text, no words`;
+
+    try {
+        const response = await fetch('https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ inputs: coverPrompt })
+        });
+
+        if (!response.ok) return null;
+        const blob = await response.blob();
+        if (blob.size < 1000) return null;
+        return URL.createObjectURL(blob);
+    } catch {
+        return null;
+    }
+}
+
+async function generateMarketing(title, genre, synopsis, lang) {
+    const hashtags = generateHashtags(genre, title);
+    const socialPost = `📚 ¡Nueva historia de ${genre}! "${title}" — ${synopsis.substring(0, 120)}... ¿Te atreves a leerla? ${hashtags.slice(0,4).join(' ')}`;
+    const amazonDesc = `"${title}" es una obra de ${genre} que explora los límites del miedo humano. ${synopsis} Una experiencia literaria que no olvidarás.`;
+    const backCover = synopsis + ' Una historia para los que no le temen a la oscuridad... o que deberían.';
+
+    return { hashtags, socialPost, amazonDesc, backCover };
+}
+
+function generateHashtags(genre, title) {
+    const base = ['#HorrorBooks', '#TerrorLiterario', '#HorrorFiction', '#LecturaDeTerror'];
+    const genreMap = {
+        'terror psicológico': ['#TerrorPsicologico', '#PsychologicalHorror', '#MentalTerror'],
+        'terror sobrenatural': ['#Supernatural', '#TerrorSobrenatural', '#GhostStory'],
+        'terror gótico': ['#GothicHorror', '#TerrorGotico', '#GothicFiction'],
+        'terror cósmico lovecraftiano': ['#CosmicHorror', '#Lovecraftian', '#TerrorCosmico'],
+        'terror urbano': ['#UrbanHorror', '#CityTerror', '#TerrorUrbano'],
+        'terror paranormal': ['#Paranormal', '#TerrorParanormal', '#HauntedStory'],
+        'slasher suspense': ['#Slasher', '#Suspense', '#Thriller'],
+        'terror folclórico mexicano': ['#TerrorMexicano', '#FolkloreHorror', '#MexicanHorror']
+    };
+    const specific = genreMap[genre] || ['#Horror', '#Terror'];
+    const titleTag = '#' + title.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ]/g, '').substring(0, 15);
+    return [...base, ...specific, titleTag, '#ÁNGEL_AI', '#LibroDeAI'];
+}
+
+function buildStoryPrompt(title, genre, char, element, idea, chapters, lang) {
+    return `Write a complete horror short story in ${lang} with the following specifications:
+
+TITLE: "${title}"
+GENRE: ${genre}
+PROTAGONIST: ${char}
+HORROR ELEMENT: ${element}
+${idea ? `ADDITIONAL IDEAS: ${idea}` : ''}
+NUMBER OF CHAPTERS: ${chapters}
+
+Requirements:
+- Write ${chapters} complete chapters with titles
+- Each chapter should be 3-4 substantial paragraphs
+- Build tension progressively
+- Include atmospheric descriptions
+- End with a haunting conclusion
+- Use literary prose, not simple narration
+- Format each chapter as: [CHAPTER TITLE]\n[content]\n\n
+
+Begin the story now:`;
+}
+
+function generateFallbackStory(title, genre, char, element, chapters, lang) {
+    const isSpanish = lang === 'español' || lang === 'spanglish';
+    const ch1 = isSpanish ? 'Capítulo I — El Comienzo' : 'Chapter I — The Beginning';
+    const ch2 = isSpanish ? 'Capítulo II — La Oscuridad' : 'Chapter II — The Darkness';
+    const ch3 = isSpanish ? 'Capítulo III — El Final' : 'Chapter III — The End';
+
+    return `${ch1}
+Nadie advirtió a ${char} sobre ${element}. Era una noche sin estrellas cuando todo comenzó, en ese espacio donde la realidad y el miedo comparten la misma dirección. El viento susurraba nombres que nadie había pronunciado en años.
+
+${ch2}
+${element} se manifestó con una claridad brutal. ${char} comprendió entonces que algunas cosas no tienen explicación racional — solo tienen consecuencias. El ${genre} no es un género literario: es un recordatorio de lo que existe en los márgenes de lo que entendemos.
+
+${chapters > 2 ? `${ch3}
+Al final, solo quedó la pregunta que nunca debería haberse hecho. ${char} miró hacia la oscuridad y la oscuridad, como siempre, devolvió la mirada. No hay finales felices en las historias verdaderas. Solo hay preguntas que persisten.` : ''}`;
+}
+
+// === DISPLAY RESULT ===
+function displayResult(book) {
+    document.getElementById('resultTitle').textContent = book.title;
+    document.getElementById('resultGenre').textContent = book.genre.toUpperCase();
+    document.getElementById('resultSynopsis').textContent = book.synopsis;
+
+    const cover = document.getElementById('coverContainer');
+    if (book.coverUrl) {
+        cover.innerHTML = `<img src="${book.coverUrl}" alt="Portada">`;
+    } else {
+        cover.innerHTML = `<div class="cover-placeholder">${book.emoji || '📕'}</div>`;
+    }
+
+    document.getElementById('resultBook').classList.add('visible');
+    document.getElementById('progressSection').classList.remove('visible');
+    document.getElementById('resultBook').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// === MARKETING DISPLAY ===
+function showMarketing() {
+    if (!currentBook || !currentBook.marketing) return;
+    const { hashtags, socialPost, amazonDesc, backCover } = currentBook.marketing;
+    const mkt = currentBook.marketing;
+
+    const grid = document.getElementById('marketingGrid');
+    grid.innerHTML = `
+        <div class="marketing-card">
+            <div class="marketing-card-label">Post para Redes Sociales</div>
+            <div class="marketing-card-text">${socialPost}</div>
+            <button class="copy-mkt-btn" onclick="copyText(this, \`${socialPost.replace(/`/g,'\\`')}\`)">Copiar</button>
+        </div>
+        <div class="marketing-card">
+            <div class="marketing-card-label">Hashtags</div>
+            <div class="marketing-card-text">${hashtags.map(h => `<span class="hashtag">${h}</span>`).join(' ')}</div>
+            <button class="copy-mkt-btn" onclick="copyText(this, '${hashtags.join(' ')}')">Copiar</button>
+        </div>
+        <div class="marketing-card">
+            <div class="marketing-card-label">Descripción para Amazon/Plataformas</div>
+            <div class="marketing-card-text">${amazonDesc}</div>
+            <button class="copy-mkt-btn" onclick="copyText(this, \`${amazonDesc.replace(/`/g,'\\`')}\`)">Copiar</button>
+        </div>
+        <div class="marketing-card">
+            <div class="marketing-card-label">Contraportada del Libro</div>
+            <div class="marketing-card-text">${backCover}</div>
+            <button class="copy-mkt-btn" onclick="copyText(this, \`${backCover.replace(/`/g,'\\`')}\`)">Copiar</button>
+        </div>
+    `;
+
+    document.getElementById('marketingSection').classList.add('visible');
+    document.getElementById('marketingSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyText(btn, text) {
+    navigator.clipboard.writeText(text);
+    btn.textContent = '¡Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar', 2000);
+}
+
+// === READER ===
+function openReader(bookOverride) {
+    const book = bookOverride || currentBook;
+    if (!book) return;
+
+    document.getElementById('readerBookTitle').textContent = book.title;
+    const content = document.getElementById('readerContent');
+
+    let html = `<h1 class="reader-title">${book.title}</h1>
+    <div class="reader-genre">${book.genre}</div>`;
+
+    if (book.content) {
+        // Static library format
+        book.content.forEach((ch, i) => {
+            html += `<div class="chapter-title">${ch.chapter}</div>
+            <div class="chapter-text">${ch.text}</div>`;
+            if (i < book.content.length - 1) {
+                html += `<div class="chapter-divider">✦ ✦ ✦</div>`;
+            }
+        });
+    } else if (book.storyContent) {
+        // Generated format
+        const lines = book.storyContent.split('\n');
+        let inChapter = false;
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed) {
+                if (inChapter) html += '</p><p>';
+                return;
+            }
+            if (trimmed.match(/^(Capítulo|Chapter|CAPÍTULO|CHAPTER)\s/i) || trimmed.match(/^Cap\.\s/i)) {
+                if (inChapter) html += '</p></div>';
+                html += `<div class="chapter-divider">✦ ✦ ✦</div><div class="chapter-title">${trimmed}</div><div class="chapter-text"><p>`;
+                inChapter = true;
+            } else {
+                html += trimmed + ' ';
+            }
+        });
+        if (inChapter) html += '</p></div>';
+        if (!inChapter) {
+            html += `<div class="chapter-text"><p>${book.storyContent.replace(/\n\n/g, '</p><p>').replace(/\n/g, ' ')}</p></div>`;
+        }
+    }
+
+    content.innerHTML = html;
+    document.getElementById('readerOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeReader() {
+    document.getElementById('readerOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// === DOWNLOAD BOOK ===
+function downloadBook() {
+    if (!currentBook) return;
+    const book = currentBook;
+
+    let storyHtml = '';
+    if (book.content) {
+        book.content.forEach(ch => {
+            storyHtml += `<h2>${ch.chapter}</h2>${ch.text}`;
+        });
+    } else {
+        storyHtml = `<div class="story">${book.storyContent?.replace(/\n/g, '<br>') || ''}</div>`;
+    }
+
+    const mktHtml = book.marketing ? `
+        <div class="marketing">
+            <h2>📣 Materiales de Marketing</h2>
+            <h3>Post para Redes:</h3><p>${book.marketing.socialPost}</p>
+            <h3>Hashtags:</h3><p>${book.marketing.hashtags?.join(' ')}</p>
+            <h3>Descripción para Plataformas:</h3><p>${book.marketing.amazonDesc}</p>
+        </div>` : '';
+
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>${book.title} — ÁNGEL Horror</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 700px; margin: 60px auto; padding: 20px; background: #0a0000; color: #e8e0d0; line-height: 1.9; }
+  h1 { font-size: 2.5rem; color: #e8e0d0; margin-bottom: 5px; }
+  .genre { color: #8b0000; letter-spacing: 4px; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 40px; }
+  h2 { color: #8b0000; margin: 40px 0 15px; border-bottom: 1px solid rgba(139,0,0,0.3); padding-bottom: 10px; }
+  .synopsis { font-style: italic; color: #a09080; margin-bottom: 40px; }
+  .marketing { margin-top: 60px; border-top: 1px solid rgba(139,0,0,0.3); padding-top: 30px; }
+  .footer { margin-top: 60px; text-align: center; color: #4a1010; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<h1>${book.title}</h1>
+<div class="genre">${book.genre}</div>
+<p class="synopsis">${book.synopsis || ''}</p>
+${storyHtml}
+${mktHtml}
+<div class="footer">Creado por ÁNGEL — Agente Neural Generador de Escritura Literaria<br>Familia de AI: El Narrador · El Escritor · El Editor · El Diseñador · El Mercader</div>
+</body></html>`;
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = book.title.replace(/[^a-zA-Z0-9]/g, '_') + '_ANGEL.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Libro descargado!');
+}
+
+// === SAVE TO LIBRARY ===
+function saveToLibrary() {
+    if (!currentBook) return;
+    const exists = generatedBooks.find(b => b.id === currentBook.id);
+    if (!exists) {
+        generatedBooks.push(currentBook);
+        currentLibrary = [...staticBooks, ...generatedBooks];
+    }
+    showToast('Guardado en tu biblioteca!');
+}
+
+// === LIBRARY ===
+function renderLibrary() {
+    const grid = document.getElementById('libraryGrid');
+    grid.innerHTML = '';
+    currentLibrary.forEach(book => {
+        const card = document.createElement('div');
+        card.className = 'book-card';
+        card.innerHTML = `
+            <div class="book-card-cover" style="background: ${book.coverBg || 'linear-gradient(135deg,#1a0000,#000010)'}">
+                ${book.coverUrl ? `<img src="${book.coverUrl}" alt="">` : ''}
+                <span class="emoji-cover">${book.emoji || '📕'}</span>
+            </div>
+            <div class="book-card-info">
+                <div class="book-card-genre">${book.genre}</div>
+                <div class="book-card-title">${book.title}</div>
+                <p class="book-card-desc">${(book.desc || book.synopsis || '').substring(0, 80)}...</p>
+                <button class="book-card-btn" onclick="openReader(currentLibrary[${currentLibrary.indexOf(book)}])">📖 Leer</button>
+            </div>`;
+        grid.appendChild(card);
+    });
+}
+
+function getGenreEmoji(genre) {
+    const map = {
+        'terror psicológico': '🧠',
+        'terror sobrenatural': '👻',
+        'terror gótico': '🏚️',
+        'terror cósmico lovecraftiano': '🐙',
+        'terror urbano': '🌆',
+        'terror paranormal': '👁️',
+        'slasher suspense': '🔪',
+        'terror folclórico mexicano': '💀'
+    };
+    return map[genre] || '📕';
+}
+
+// === TOAST ===
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// === TOKEN CHECK ON LOAD ===
+window.addEventListener('load', () => {
+    if (!getHFToken()) {
+        const t = prompt('ÁNGEL necesita tu token de Hugging Face (gratis en huggingface.co):\n\nPega tu token aquí (empieza con hf_):');
+        if (t && t.startsWith('hf_')) {
+            localStorage.setItem('hf_token', t);
+            showToast('Token guardado. ÁNGEL está listo!');
+        }
+    }
+    renderLibrary();
+});
+</script>
+</body>
+</html>
